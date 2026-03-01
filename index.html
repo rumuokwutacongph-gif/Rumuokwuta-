@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ministry App">
+<meta name="theme-color" content="#1b2d4f">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>Rumuokwuta Ministry Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1b2d4f;--navy2:#243860;--gold:#c8a94a;--gold2:#e8c96a;--cream:#f5f0e8;--soft:#e4ddd0;--green:#3d7a52;--red:#883333;--muted:#7a7060;--border:rgba(200,190,170,0.5);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Lato',sans-serif;background:var(--cream);color:#1e1e1e;min-height:100vh;}
+.screen{display:none;min-height:100vh;}.screen.active{display:block;}
+#screen-landing{background:linear-gradient(160deg,#1b2d4f 0%,#0f1d36 100%);}
+.land-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:30px 20px;}
+.land-eye{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.land-title{font-family:'Playfair Display',serif;font-size:clamp(30px,6vw,52px);font-weight:800;color:#fff;text-align:center;line-height:1.1;margin-bottom:6px;}
+.land-sub{color:rgba(255,255,255,0.35);font-size:13px;margin-bottom:44px;letter-spacing:1px;}
+.land-cards{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+.land-card{background:rgba(255,255,255,0.06);border:1px solid rgba(200,169,74,0.25);border-radius:16px;padding:30px 26px;text-align:center;cursor:pointer;transition:all 0.3s;width:200px;}
+.land-card:hover{background:rgba(255,255,255,0.11);border-color:var(--gold);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+.land-card-icon{font-size:32px;margin-bottom:11px;}
+.land-card-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;}
+.land-card-sub{font-size:12px;color:rgba(255,255,255,0.35);}
+.login-box{background:rgba(255,255,255,0.06);border:1px solid rgba(200,169,74,0.2);border-radius:16px;padding:34px 28px;width:100%;max-width:380px;}
+.login-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;}
+.login-sub{font-size:13px;color:rgba(255,255,255,0.35);margin-bottom:22px;}
+.lf-lbl{display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:5px;}
+.lf-inp{width:100%;padding:11px 14px;border-radius:8px;border:1px solid rgba(200,169,74,0.25);background:rgba(255,255,255,0.07);color:#fff;font-family:'Lato',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;margin-bottom:13px;}
+.lf-inp:focus{border-color:var(--gold);background:rgba(255,255,255,0.1);}
+.lf-inp::placeholder{color:rgba(255,255,255,0.2);}
+.btn-login{width:100%;padding:13px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;font-family:'Lato',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;letter-spacing:0.5px;transition:background 0.2s;}
+.btn-login:hover{background:var(--gold2);}
+.err-box{background:rgba(136,51,51,0.3);border:1px solid rgba(136,51,51,0.5);border-radius:6px;padding:10px 14px;font-size:13px;color:#ffaaaa;margin-bottom:14px;display:none;}
+.back-link{color:rgba(255,255,255,0.35);font-size:13px;cursor:pointer;text-align:center;margin-top:16px;display:block;}
+.back-link:hover{color:rgba(255,255,255,0.65);}
+.app-header{background:var(--navy);color:#fff;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 14px rgba(0,0,0,0.25);}
+.app-logo{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;display:flex;align-items:center;gap:9px;}
+.logo-dot{width:26px;height:26px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.hdr-right{display:flex;align-items:center;gap:10px;}
+.user-pill{background:rgba(255,255,255,0.1);border-radius:20px;padding:4px 12px;font-size:12px;color:rgba(255,255,255,0.8);}
+.btn-out{background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.55);padding:4px 11px;border-radius:6px;cursor:pointer;font-size:12px;font-family:'Lato',sans-serif;}
+.btn-out:hover{border-color:rgba(255,255,255,0.5);color:#fff;}
+.bell{position:relative;cursor:pointer;padding:4px;font-size:19px;line-height:1;}
+.bell-badge{position:absolute;top:-2px;right:-2px;background:var(--gold);color:var(--navy);border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;}
+.app-nav{background:#fff;border-bottom:1px solid var(--border);display:flex;padding:0 14px;overflow-x:auto;}
+.nav-btn{padding:12px 14px;border:none;background:none;cursor:pointer;font-family:'Lato',sans-serif;font-size:13px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap;transition:all 0.2s;}
+.nav-btn.active{color:var(--navy);border-bottom-color:var(--gold);}
+.page{max-width:920px;margin:0 auto;padding:22px 14px;}
+.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;border:1px solid var(--border);box-shadow:0 1px 5px rgba(0,0,0,0.04);}
+.card-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--navy);margin-bottom:14px;}
+.section-title{font-family:'Playfair Display',serif;font-size:23px;font-weight:800;color:var(--navy);}
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.btn{padding:9px 15px;border-radius:8px;border:none;cursor:pointer;font-family:'Lato',sans-serif;font-size:13px;font-weight:700;transition:all 0.2s;}
+.btn-primary{background:var(--navy);color:#fff;}.btn-primary:hover{background:var(--navy2);}
+.btn-gold{background:var(--gold);color:var(--navy);}.btn-gold:hover{background:var(--gold2);}
+.btn-sm{padding:5px 11px;font-size:12px;}
+.btn-outline{background:transparent;border:1px solid var(--border);color:#333;}.btn-outline:hover{background:var(--cream);}
+.xdel{background:#fff0f0;color:var(--red);border:1px solid #f0cece;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Lato',sans-serif;}
+.xedit{background:#f0f4ff;color:var(--navy);border:1px solid #c0ccde;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Lato',sans-serif;}
+.fi{margin-bottom:12px;}
+.fi label{display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+input,select,textarea{width:100%;padding:9px 12px;border:1px solid var(--soft);border-radius:8px;font-family:'Lato',sans-serif;font-size:14px;background:var(--cream);color:#1e1e1e;outline:none;transition:border-color 0.2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--navy);background:#fff;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;}
+.hr{border:none;border-top:1px solid var(--soft);margin:13px 0;}
+.sec-head{background:#e8eef8;border-radius:8px;padding:9px 12px;margin-bottom:11px;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--navy);}
+.aply-part{background:var(--cream);border-radius:8px;padding:12px;margin-bottom:9px;border-left:3px solid var(--gold);}
+.aply-lbl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:18px;}
+.stat{background:#fff;border-radius:10px;padding:15px 10px;text-align:center;border:1px solid var(--border);}
+.stat-n{font-family:'Playfair Display',serif;font-size:26px;font-weight:800;color:var(--navy);}
+.stat-l{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.b-navy{background:#e0e6f0;color:#1b2d4f;}.b-green{background:#dff0e6;color:#2d6b3e;}.b-gold{background:#fdf3d8;color:#8a6a10;}.b-gray{background:#ebebeb;color:#666;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:var(--cream);padding:8px 12px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--soft);}
+td{padding:10px 12px;border-bottom:1px solid rgba(200,190,170,0.22);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5);}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(15,25,50,0.6);z-index:300;align-items:center;justify-content:center;padding:14px;backdrop-filter:blur(3px);}
+.modal-bg.open{display:flex;}
+.modal-box{background:#fff;border-radius:16px;padding:26px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;animation:fadeUp 0.2s ease;}
+.modal-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:16px;}
+.modal-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:16px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.sched-card{background:#fff;border-radius:12px;padding:18px;margin-bottom:14px;border:1px solid var(--border);}
+.s-sec{border-left:3px solid var(--gold);padding-left:13px;margin-bottom:14px;}
+.s-hd{border-radius:6px;color:#fff;padding:6px 11px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:9px;}
+.s-row{display:flex;gap:9px;padding:5px 0;border-bottom:1px solid rgba(200,190,170,0.22);}
+.s-row:last-child{border-bottom:none;}
+.s-lbl{font-size:12px;color:var(--muted);min-width:155px;flex-shrink:0;}
+.s-val{font-size:13px;font-weight:700;color:var(--navy);}
+.fsm-card{background:linear-gradient(135deg,#2d4a2a,#1a2d18);border-radius:12px;padding:18px;color:#fff;margin-bottom:12px;}
+.pub-card{display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:10px;margin-bottom:7px;border:1px solid transparent;transition:box-shadow 0.2s;}
+.pub-card:hover{box-shadow:0 2px 10px rgba(0,0,0,0.08);}
+.pub-av{width:35px;height:35px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;flex-shrink:0;}
+.pub-info{flex:1;min-width:0;}
+.pub-name-row{font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.pub-acts{display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
+.grp-hdr{background:var(--navy);color:#fff;padding:10px 14px;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:space-between;}
+.grp-body{background:#fff;border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;padding:10px;margin-bottom:16px;}
+.np-bd{display:none;position:fixed;inset:0;z-index:199;}.np-bd.open{display:block;}
+.np-panel{display:none;position:fixed;top:58px;right:0;width:310px;max-width:100vw;height:calc(100vh - 58px);background:#fff;z-index:200;box-shadow:-4px 0 24px rgba(0,0,0,0.13);flex-direction:column;overflow:hidden;}
+.np-panel.open{display:flex;}
+.np-head{background:var(--navy);color:#fff;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.np-list{flex:1;overflow-y:auto;}
+.np-item{padding:12px 15px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;position:relative;}
+.np-item:hover{background:var(--cream);}.np-item.unread{background:#f0f4ff;border-left:3px solid var(--navy);padding-left:12px;}
+.np-dot{position:absolute;top:13px;right:11px;width:7px;height:7px;border-radius:50%;background:var(--gold);}
+.np-title{font-weight:700;font-size:13px;color:var(--navy);margin-bottom:2px;}
+.np-body{font-size:12px;color:var(--muted);line-height:1.4;}
+.np-time{font-size:10px;color:#bbb;margin-top:4px;text-transform:uppercase;letter-spacing:0.3px;}
+.np-foot{padding:11px 13px;border-top:1px solid var(--border);background:var(--cream);flex-shrink:0;}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:700;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.3s;box-shadow:0 6px 20px rgba(0,0,0,0.25);white-space:nowrap;max-width:90vw;text-align:center;}
+#toast.show{opacity:1;}
+.cfm-bg{position:fixed;inset:0;background:rgba(15,25,50,0.6);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.cfm-box{background:#fff;border-radius:14px;padding:26px;max-width:320px;width:100%;text-align:center;}
+.empty{text-align:center;padding:34px 20px;color:var(--muted);}
+.empty-icon{font-size:34px;margin-bottom:9px;}
+#install-banner{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--navy);color:#fff;padding:13px 16px;z-index:9000;align-items:center;justify-content:space-between;box-shadow:0 -4px 20px rgba(0,0,0,0.2);gap:10px;flex-wrap:wrap;}
+@media(max-width:580px){.stats{grid-template-columns:1fr 1fr;}.row2,.row3{grid-template-columns:1fr;}.land-card{width:155px;padding:20px 12px;}}
+</style>
+</head>
+<body>
+
+<!-- LANDING SCREEN -->
+<div class="screen active" id="screen-landing">
+  <div id="v-home" class="land-wrap">
+    <div class="land-eye">Rumuokwuta Congregation</div>
+    <div class="land-title">Ministry<br>Assistant</div>
+    <div class="land-sub">Select your portal</div>
+    <div class="land-cards">
+      <div class="land-card" onclick="showLogin('publisher')">
+        <div class="land-card-icon">&#128203;</div>
+        <div class="land-card-title">Publisher</div>
+        <div class="land-card-sub">Reports &amp; Schedules</div>
+      </div>
+      <div class="land-card" onclick="showLogin('admin')">
+        <div class="land-card-icon">&#128737;</div>
+        <div class="land-card-title">ACS / Admin</div>
+        <div class="land-card-sub">Manage &amp; Assign</div>
+      </div>
+    </div>
+  </div>
+  <div id="v-login" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:30px 20px;">
+    <div class="login-box">
+      <div class="login-title" id="login-title">Publisher Login</div>
+      <div class="login-sub" id="login-sub">Enter your name and PIN</div>
+
+      <!-- Tab switcher (publisher only) -->
+      <div id="reg-tabs" style="display:flex;border-radius:8px;overflow:hidden;border:1px solid rgba(200,169,74,0.3);margin-bottom:18px;">
+        <button id="tab-login" onclick="switchTab('login')" style="flex:1;padding:9px;background:var(--gold);color:var(--navy);border:none;font-family:Lato,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Sign In</button>
+        <button id="tab-reg" onclick="switchTab('reg')" style="flex:1;padding:9px;background:transparent;color:rgba(255,255,255,0.5);border:none;font-family:Lato,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Register</button>
+      </div>
+
+      <div class="err-box" id="login-err"></div>
+      <div class="err-box" id="reg-err"></div>
+
+      <!-- SIGN IN form -->
+      <div id="form-login">
+        <label class="lf-lbl">Full Name</label>
+        <input class="lf-inp" type="text" id="inp-name" placeholder="Your full name" autocomplete="off" autocorrect="off" autocapitalize="words">
+        <label class="lf-lbl">PIN</label>
+        <input class="lf-inp" type="password" id="inp-pin" placeholder="4-6 digit PIN" maxlength="6" inputmode="numeric">
+        <button class="btn-login" onclick="doLogin()">Sign In</button>
+      </div>
+
+      <!-- REGISTER form -->
+      <div id="form-reg" style="display:none;">
+        <label class="lf-lbl">Full Name</label>
+        <input class="lf-inp" type="text" id="reg-name" placeholder="Your full name" autocorrect="off" autocapitalize="words">
+        <label class="lf-lbl">Choose a PIN (4-6 digits)</label>
+        <input class="lf-inp" type="password" id="reg-pin" placeholder="e.g. 1234" maxlength="6" inputmode="numeric">
+        <label class="lf-lbl">Confirm PIN</label>
+        <input class="lf-inp" type="password" id="reg-pin2" placeholder="Repeat PIN" maxlength="6" inputmode="numeric">
+        <label class="lf-lbl">Group</label>
+        <select class="lf-inp" id="reg-group" style="color:#fff;background:rgba(255,255,255,0.07);border-color:rgba(200,169,74,0.25);"></select>
+        <button class="btn-login" onclick="doRegister()">Create Account</button>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);text-align:center;margin-top:10px;line-height:1.5;">Your account will be visible to the admin after registration.</div>
+      </div>
+
+      <span class="back-link" onclick="showHome()">&#8592; Back</span>
+    </div>
+  </div>
+</div>
+
+<!-- PUBLISHER SCREEN -->
+<div class="screen" id="screen-pub">
+  <div class="app-header">
+    <div class="app-logo"><div class="logo-dot">&#128214;</div>Rumuokwuta</div>
+    <div class="hdr-right">
+      <div class="user-pill" id="pub-pill"></div>
+      <div class="sync-dot" style="font-size:11px;white-space:nowrap;color:#aaa"></div>
+      <div class="bell" onclick="openNP()">&#128276;<div class="bell-badge" id="pub-badge"></div></div>
+      <button class="btn-out" onclick="doSignOut()">Sign Out</button>
+    </div>
+  </div>
+  <nav class="app-nav">
+    <button class="nav-btn active" onclick="pubNav(this,'pt-home')">Home</button>
+    <button class="nav-btn" onclick="pubNav(this,'pt-report')">My Report</button>
+    <button class="nav-btn" onclick="pubNav(this,'pt-midweek')">Midweek</button>
+    <button class="nav-btn" onclick="pubNav(this,'pt-weekend')">Weekend</button>
+    <button class="nav-btn" onclick="pubNav(this,'pt-fsm')">Field Service</button>
+    <button class="nav-btn" onclick="pubNav(this,'pt-sync')">&#9729; Sync</button>
+  </nav>
+  <div class="page">
+    <div id="pt-home">
+      <!-- Meeting info banner -->
+      <div id="pub-meeting-banner" style="background:linear-gradient(135deg,var(--navy),#0f1d36);color:#fff;border-radius:14px;padding:18px 18px 14px;margin-bottom:14px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;opacity:0.5;text-transform:uppercase;margin-bottom:4px">Next Meeting</div>
+        <div id="pub-next-meeting-title" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;line-height:1.2;margin-bottom:2px">Loading…</div>
+        <div id="pub-next-meeting-date" style="font-size:13px;opacity:0.65;margin-bottom:12px"></div>
+        <div id="pub-next-meeting-part" style="font-size:13px;background:rgba(200,169,74,0.15);border:1px solid rgba(200,169,74,0.3);border-radius:8px;padding:8px 12px;margin-bottom:12px;display:none"></div>
+        <div id="pub-zoom-box" style="display:none">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;opacity:0.5;text-transform:uppercase;margin-bottom:6px">&#128247; Join on Zoom</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+            <span id="pub-zoom-id" style="font-size:13px;background:rgba(255,255,255,0.1);border-radius:6px;padding:4px 10px;font-family:monospace"></span>
+            <span id="pub-zoom-pass" style="font-size:13px;background:rgba(255,255,255,0.1);border-radius:6px;padding:4px 10px"></span>
+            <a id="pub-zoom-link" href="#" target="_blank" style="background:var(--gold);color:var(--navy);border-radius:7px;padding:6px 14px;font-size:12px;font-weight:700;text-decoration:none;display:none">Join Meeting &#8594;</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div class="section-title" id="pub-welcome" style="font-size:16px"></div>
+        <div style="font-size:12px;color:var(--muted)" id="pub-mlbl"></div>
+      </div>
+      <div class="card"><div class="card-title">My Report This Month</div><div id="pub-my-rpt"></div></div>
+      <div class="card"><div class="card-title">Upcoming Meetings</div><div id="pub-upcoming"></div></div>
+    </div>
+    <div id="pt-sync" style="display:none">
+      <div class="page-head"><div class="section-title">&#9729; Cloud Sync</div></div>
+      <div class="card" style="border-left:4px solid var(--gold)">
+        <div class="card-title">Sync Status</div>
+        <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:10px">
+          <div class="sync-dot" style="font-size:14px;font-weight:700"></div>
+          <button class="btn btn-outline btn-sm" onclick="pullFromCloud(function(ok){if(ok){renderPubHome();renderPubMW();renderPubWK();renderPubFSM();toast('Refreshed!');}else toast('Could not reach cloud.')})">Refresh Now</button>
+        </div>
+        <div style="font-size:12px;color:var(--muted)">When connected, schedules and Zoom details sync automatically from admin.</div>
+      </div>
+      <div class="card" style="border-left:4px solid #f39c12">
+        <div class="card-title">&#128279; Connect to Cloud</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Ask your admin for the <strong>Web App URL</strong> and paste it below to sync schedules and Zoom details automatically.</p>
+        <div class="fi"><label>&#127758; Web App URL (from admin)</label>
+          <input type="url" id="pub-gas-url-input" placeholder="https://script.google.com/macros/s/…/exec" style="font-size:12px;">
+        </div>
+        <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-gold" onclick="connectPubGAS()">&#128279; Connect</button>
+          <span id="pub-gas-result" style="font-size:12px;font-weight:700;"></span>
+        </div>
+        <div id="pub-gas-status" style="margin-top:10px;font-size:12px;color:#888;padding:9px;background:var(--cream);border-radius:8px;"></div>
+      </div>
+    </div>
+    <div id="pt-report" style="display:none">
+      <div class="card" style="background:linear-gradient(135deg,var(--navy),#0f1d36);color:#fff;margin-bottom:18px;">
+        <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:700;margin-bottom:4px">Field Service Report</div>
+        <div style="font-size:13px;opacity:0.5" id="pub-rpt-sub"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Submit Monthly Report</div>
+        <div class="row2"><div class="fi"><label>Month</label><input type="month" id="rpt-month"></div><div class="fi"><label>Group</label><select id="rpt-group"><option value="">Select group</option></select></div></div>
+        <div class="row3"><div class="fi"><label>Hours</label><input type="number" id="rpt-hours" min="0" step="0.5" placeholder="0"></div><div class="fi"><label>Return Visits</label><input type="number" id="rpt-rv" min="0" placeholder="0"></div><div class="fi"><label>Bible Studies</label><input type="number" id="rpt-bs" min="0" placeholder="0"></div></div>
+        <div class="fi"><label>Placements</label><input type="number" id="rpt-placements" min="0" placeholder="0"></div>
+        <div class="fi"><label>Notes to Overseer</label><textarea id="rpt-notes" rows="3" placeholder="Optional..."></textarea></div>
+        <button class="btn btn-gold" onclick="submitReport()">Submit Report</button>
+      </div>
+    </div>
+    <div id="pt-midweek" style="display:none"><div class="page-head"><div class="section-title">Midweek Schedule</div></div><div id="pub-mw-list"></div></div>
+    <div id="pt-weekend" style="display:none"><div class="page-head"><div class="section-title">Weekend Schedule</div></div><div id="pub-wk-list"></div></div>
+    <div id="pt-fsm" style="display:none"><div class="page-head"><div class="section-title">Field Service Meetings</div></div><div id="pub-fsm-list"></div></div>
+  </div>
+</div>
+
+<!-- ADMIN SCREEN -->
+<div class="screen" id="screen-admin">
+  <div class="app-header">
+    <div class="app-logo"><div class="logo-dot">&#128737;</div>Admin Panel</div>
+    <div class="hdr-right">
+      <div class="user-pill" id="adm-pill"></div>
+      <div class="sync-dot" style="font-size:11px;white-space:nowrap;color:#aaa"></div>
+      <div class="bell" onclick="openNP()">&#128276;<div class="bell-badge" id="adm-badge"></div></div>
+      <button class="btn-out" onclick="doSignOut()">Sign Out</button>
+    </div>
+  </div>
+  <nav class="app-nav">
+    <button class="nav-btn active" onclick="admNav(this,'at-home')">Dashboard</button>
+    <button class="nav-btn" onclick="admNav(this,'at-reports')">Reports</button>
+    <button class="nav-btn" onclick="admNav(this,'at-publishers')">Publishers</button>
+    <button class="nav-btn" onclick="admNav(this,'at-midweek')">Midweek</button>
+    <button class="nav-btn" onclick="admNav(this,'at-weekend')">Weekend</button>
+    <button class="nav-btn" onclick="admNav(this,'at-fsm')">Field Service</button>
+    <button class="nav-btn" onclick="admNav(this,'at-groups')">Groups</button>
+    <button class="nav-btn" onclick="admNav(this,'at-data')">&#128190; Data</button>
+  </nav>
+  <div class="page">
+    <div id="at-home">
+      <div class="page-head"><div class="section-title">Dashboard</div><div style="display:flex;gap:9px;align-items:center"><span style="font-size:13px;color:var(--muted)" id="adm-mlbl"></span><button class="btn btn-gold btn-sm" onclick="sendRemindersNow()">Send Reminders</button></div></div>
+      <!-- Meeting + Zoom banner -->
+      <div id="adm-meeting-banner" style="background:linear-gradient(135deg,var(--navy),#0f1d36);color:#fff;border-radius:14px;padding:18px 18px 14px;margin-bottom:14px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;opacity:0.5;text-transform:uppercase;margin-bottom:4px">Next Meeting</div>
+        <div id="adm-next-title" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;line-height:1.2;margin-bottom:2px">—</div>
+        <div id="adm-next-date" style="font-size:13px;opacity:0.65;margin-bottom:10px"></div>
+        <div id="adm-next-part" style="font-size:13px;background:rgba(200,169,74,0.15);border:1px solid rgba(200,169,74,0.3);border-radius:8px;padding:8px 12px;margin-bottom:10px;display:none"></div>
+        <div id="adm-zoom-box" style="display:none">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;opacity:0.5;text-transform:uppercase;margin-bottom:6px">&#128247; Zoom</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+            <span id="adm-zoom-id" style="font-size:13px;background:rgba(255,255,255,0.1);border-radius:6px;padding:4px 10px;font-family:monospace"></span>
+            <span id="adm-zoom-pass" style="font-size:13px;background:rgba(255,255,255,0.1);border-radius:6px;padding:4px 10px"></span>
+            <a id="adm-zoom-link" href="#" target="_blank" style="background:var(--gold);color:var(--navy);border-radius:7px;padding:6px 14px;font-size:12px;font-weight:700;text-decoration:none;display:none">Join &#8594;</a>
+          </div>
+        </div>
+      </div>
+      <div class="stats"><div class="stat"><div class="stat-n" id="st-pub">0</div><div class="stat-l">Publishers</div></div><div class="stat"><div class="stat-n" id="st-rpt">0</div><div class="stat-l">Reports In</div></div><div class="stat"><div class="stat-n" id="st-hrs">0</div><div class="stat-l">Total Hours</div></div><div class="stat"><div class="stat-n" id="st-bs">0</div><div class="stat-l">Bible Studies</div></div></div>
+      <div class="card"><div class="card-title">Recent Reports</div><div id="adm-recent"></div></div>
+    </div>
+    <div id="at-reports" style="display:none">
+      <div class="page-head"><div class="section-title">Reports</div><button class="btn btn-outline btn-sm" onclick="exportCSV()">Export CSV</button></div>
+      <div class="card"><div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px"><select id="fil-month" onchange="renderAdmReports()" style="max-width:175px"></select><select id="fil-group" onchange="renderAdmReports()" style="max-width:155px"><option value="">All Groups</option></select></div><div id="adm-rpt-table"></div></div>
+    </div>
+    <div id="at-publishers" style="display:none">
+      <div class="page-head"><div class="section-title">Publishers</div><button class="btn btn-primary" onclick="openM('m-addpub')">+ Add Publisher</button></div>
+      <div class="card"><div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px;align-items:center"><input type="text" id="pub-search" placeholder="Search..." style="max-width:190px" oninput="renderPubs()"><select id="pub-gfil" onchange="renderPubs()" style="max-width:155px"><option value="">All Groups</option></select><div style="margin-left:auto;font-size:12px;color:var(--muted)" id="pub-counts"></div></div><div id="pub-list"></div></div>
+    </div>
+    <div id="at-midweek" style="display:none"><div class="page-head"><div class="section-title">Midweek Schedule</div><button class="btn btn-primary" onclick="openM('m-mw')">+ Add Week</button></div><div id="adm-mw-list"></div></div>
+    <div id="at-weekend" style="display:none"><div class="page-head"><div class="section-title">Weekend Schedule</div><button class="btn btn-primary" onclick="openM('m-wk')">+ Add Weekend</button></div><div id="adm-wk-list"></div></div>
+    <div id="at-fsm" style="display:none"><div class="page-head"><div class="section-title">Field Service</div><button class="btn btn-primary" onclick="openM('m-fsm')">+ Add Meeting</button></div><div id="adm-fsm-list"></div></div>
+    <div id="at-groups" style="display:none"><div class="page-head"><div class="section-title">Groups</div><button class="btn btn-primary" onclick="openM('m-addgrp')">+ Add Group</button></div><div class="card"><div id="grp-list"></div></div></div>
+    <div id="at-data" style="display:none">
+      <div class="page-head"><div class="section-title">Data &amp; Sync</div></div>
+
+      <!-- Sync Status -->
+      <div class="card" style="border-left:4px solid var(--gold)">
+        <div class="card-title">&#9729;&#65039; Sync Status</div>
+        <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:10px">
+          <div class="sync-dot" style="font-size:14px;font-weight:700"></div>
+          <button class="btn btn-gold btn-sm" onclick="pushToCloud();toast('Pushing…')">Push Now</button>
+          <button class="btn btn-outline btn-sm" onclick="pullFromCloud(function(ok){if(ok){renderAdmHome();renderAdmReports();renderPubs();renderAdmMW();renderAdmWK();renderAdmFSM();renderGroups();renderZoomSettings();toast('Refreshed!');}else toast('Could not reach cloud.')})">Pull Now</button>
+        </div>
+        <div style="font-size:12px;color:var(--muted)">Auto-syncs every 20 seconds. Publishers also sync when they open the app.</div>
+      </div>
+
+      <!-- GAS Setup -->
+      <div class="card" style="border-left:4px solid #f39c12">
+        <div class="card-title">&#128279; Cloud Setup &mdash; Google Apps Script (Free)</div>
+        <div style="font-size:13px;color:var(--muted);line-height:2;margin-bottom:14px">
+          Do this <strong>once</strong>. Then share the Web App URL with all devices including publishers.<br>
+          <strong style="color:var(--navy)">1.</strong> Go to <strong>script.google.com</strong> &rarr; sign in &rarr; click <strong>New project</strong><br>
+          <strong style="color:var(--navy)">2.</strong> Delete all code in the editor, tap <strong>Copy</strong> below and paste it in<br>
+          <strong style="color:var(--navy)">3.</strong> Click <strong>Deploy &rarr; New deployment</strong> &rarr; gear &#9881; &rarr; <strong>Web app</strong><br>
+          <strong style="color:var(--navy)">4.</strong> Execute as: <strong>Me</strong> &nbsp;|&nbsp; Who has access: <strong style="color:#c0392b">Anyone</strong><br>
+          <strong style="color:var(--navy)">5.</strong> Click <strong>Deploy</strong> &rarr; <strong>Authorize access</strong> &rarr; copy the <strong>Web app URL</strong><br>
+          <strong style="color:var(--navy)">6.</strong> Paste below &rarr; tap <strong>Save &amp; Connect</strong>
+        </div>
+        <div style="background:#1e1e2e;border-radius:8px;padding:13px;margin-bottom:14px;position:relative">
+          <pre id="gas-code-pre" style="font-family:monospace;font-size:11px;color:#a8d8a8;margin:0;white-space:pre-wrap;line-height:1.7">function doGet(e){
+  var ss=SpreadsheetApp.getActiveSpreadsheet();
+  var sh=ss.getSheetByName(&#39;sync&#39;)||ss.insertSheet(&#39;sync&#39;);
+  var out=ContentService.createTextOutput();
+  out.setMimeType(ContentService.MimeType.JSON);
+  if(e.parameter.d){
+    sh.getRange(&#39;A1&#39;).setValue(decodeURIComponent(e.parameter.d));
+    out.setContent(&#39;{&quot;ok&quot;:true}&#39;);
+  }else{
+    out.setContent(sh.getRange(&#39;A1&#39;).getValue()||&#39;{}&#39;);
+  }
+  return out;
+}</pre>
+          <button onclick="copyGasCode()" style="position:absolute;top:10px;right:10px;background:var(--gold);color:var(--navy);border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer">Copy</button>
+        </div>
+        <div class="fi"><label>&#127758; Web App URL</label>
+          <input type="url" id="gas-url-input" placeholder="https://script.google.com/macros/s/…/exec" style="font-size:12px;">
+        </div>
+        <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:center">
+          <button class="btn btn-gold" onclick="connectGAS()">&#128190; Save &amp; Connect</button>
+          <button class="btn btn-outline btn-sm" onclick="testGAS()">&#10003; Test</button>
+          <span id="gas-result" style="font-size:12px;font-weight:700;"></span>
+        </div>
+        <div id="gas-status-line" style="margin-top:11px;font-size:12px;color:#888;line-height:1.8;padding:10px;background:var(--cream);border-radius:8px;"></div>
+      </div>
+
+      <!-- Zoom Meeting Details -->
+      <div class="card" style="border-left:4px solid #2d8cff">
+        <div class="card-title">&#128247; Zoom Meeting Details</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Set your congregation Zoom details. These show on the main screen for all publishers.</p>
+        <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">&#128218; Midweek Meeting (Life &amp; Ministry)</div>
+        <div class="row3">
+          <div class="fi"><label>Meeting ID</label><input type="text" id="zm-mid-id" placeholder="123 456 7890" inputmode="numeric"></div>
+          <div class="fi"><label>Passcode</label><input type="text" id="zm-mid-pass" placeholder="abc123"></div>
+          <div class="fi"><label>Join Link</label><input type="url" id="zm-mid-link" placeholder="https://zoom.us/j/..."></div>
+        </div>
+        <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin:14px 0 10px">&#127908; Weekend Meeting (Public Talk &amp; Watchtower)</div>
+        <div class="row3">
+          <div class="fi"><label>Meeting ID</label><input type="text" id="zm-wk-id" placeholder="123 456 7890" inputmode="numeric"></div>
+          <div class="fi"><label>Passcode</label><input type="text" id="zm-wk-pass" placeholder="abc123"></div>
+          <div class="fi"><label>Join Link</label><input type="url" id="zm-wk-link" placeholder="https://zoom.us/j/..."></div>
+        </div>
+        <button class="btn btn-gold" onclick="saveZoomInfo()">&#128190; Save Zoom Details</button>
+        <span id="zoom-saved-msg" style="font-size:12px;color:#4caf50;margin-left:10px;font-weight:700"></span>
+      </div>
+
+      <!-- Backup -->
+      <div class="card" style="border-left:4px solid var(--green)">
+        <div class="card-title">&#128190; Backup &amp; Restore</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Keep a local backup — takes 2 seconds.</p>
+        <button class="btn btn-gold" style="margin-bottom:13px" onclick="exportData()">&#11015; Download Backup</button>
+        <div class="fi"><label>Restore from backup file</label>
+          <input type="file" id="restore-file" accept=".json" style="background:#fff;border:2px dashed var(--soft);padding:12px;">
+        </div>
+        <button class="btn btn-primary" onclick="importData()">&#128229; Restore</button>
+      </div>
+
+      <div class="card" style="border-left:4px solid #888">
+        <div class="card-title">&#127979; Storage Info</div>
+        <div id="storage-info" style="font-size:13px;color:var(--muted);line-height:2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-bg" id="m-addpub">
+  <div class="modal-box">
+    <div class="modal-title">Add Publisher</div>
+    <div class="row2"><div class="fi"><label>Full Name</label><input type="text" id="np-name"></div><div class="fi"><label>PIN (4-6 digits)</label><input type="password" id="np-pin" maxlength="6" inputmode="numeric"></div></div>
+    <div class="row2"><div class="fi"><label>Group</label><select id="np-group"><option value="">No group</option></select></div><div class="fi"><label>Role</label><select id="np-role"><option value="publisher">Publisher</option><option value="elder">Elder</option><option value="ms">Ministerial Servant</option><option value="pioneer">Pioneer</option></select></div></div>
+    <div class="fi" style="background:#f0eef8;border-radius:8px;padding:10px 13px;display:flex;align-items:center;gap:9px"><input type="checkbox" id="np-admin" style="width:16px;height:16px;accent-color:var(--navy);cursor:pointer"><label for="np-admin" style="font-size:13px;font-weight:700;color:var(--navy);cursor:pointer;text-transform:none;letter-spacing:0;margin:0">Grant Admin / ACS Access</label></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeM('m-addpub')">Cancel</button><button class="btn btn-primary" onclick="addPub()">Add Publisher</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="m-editpub">
+  <div class="modal-box">
+    <div class="modal-title">Edit Publisher</div>
+    <input type="hidden" id="ep-id">
+    <div class="row2"><div class="fi"><label>Full Name</label><input type="text" id="ep-name"></div><div class="fi"><label>New PIN (blank = keep)</label><input type="password" id="ep-pin" maxlength="6" inputmode="numeric"></div></div>
+    <div class="row2"><div class="fi"><label>Group</label><select id="ep-group"><option value="">No group</option></select></div><div class="fi"><label>Role</label><select id="ep-role"><option value="publisher">Publisher</option><option value="elder">Elder</option><option value="ms">Ministerial Servant</option><option value="pioneer">Pioneer</option></select></div></div>
+    <div class="fi" style="background:#f0eef8;border-radius:8px;padding:10px 13px;display:flex;align-items:center;gap:9px"><input type="checkbox" id="ep-admin" style="width:16px;height:16px;accent-color:var(--navy);cursor:pointer"><label for="ep-admin" style="font-size:13px;font-weight:700;color:var(--navy);cursor:pointer;text-transform:none;letter-spacing:0;margin:0">Admin / ACS Access</label></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeM('m-editpub')">Cancel</button><button class="btn btn-primary" onclick="saveEditPub()">Save Changes</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="m-addgrp">
+  <div class="modal-box">
+    <div class="modal-title">Add Group</div>
+    <div class="fi"><label>Group Name</label><input type="text" id="ng-name" placeholder="e.g. Group 1"></div>
+    <div class="row2"><div class="fi"><label>Overseer</label><input type="text" id="ng-overseer"></div><div class="fi"><label>Assistant Overseer</label><input type="text" id="ng-asst"></div></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeM('m-addgrp')">Cancel</button><button class="btn btn-primary" onclick="addGroup()">Add Group</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="m-editgrp">
+  <div class="modal-box">
+    <div class="modal-title">Edit Group</div>
+    <input type="hidden" id="eg-id">
+    <div class="fi"><label>Group Name</label><input type="text" id="eg-name"></div>
+    <div class="row2"><div class="fi"><label>Overseer</label><input type="text" id="eg-overseer"></div><div class="fi"><label>Assistant Overseer</label><input type="text" id="eg-asst"></div></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeM('m-editgrp')">Cancel</button><button class="btn btn-primary" onclick="saveEditGrp()">Save Changes</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="m-mw">
+  <div class="modal-box">
+    <div class="modal-title">Midweek Meeting Schedule</div>
+    <div class="row2"><div class="fi"><label>Week of</label><input type="date" id="mw-date"></div><div class="fi"><label>Time</label><input type="time" id="mw-time" value="19:00"></div></div>
+    <div class="row2"><div class="fi"><label>Opening Song No.</label><input type="text" id="mw-song1" placeholder="e.g. 52"></div><div class="fi"><label>Opening Prayer</label><input type="text" id="mw-pray-open"></div></div>
+    <div class="fi"><label>Chairman</label><input type="text" id="mw-chairman"></div>
+    <div class="hr"></div>
+    <div class="sec-head">1 - Treasures From God's Word</div>
+    <div class="row2"><div class="fi"><label>Talk Title</label><input type="text" id="mw-talk"></div><div class="fi"><label>Speaker (10 min)</label><input type="text" id="mw-talk-who"></div></div>
+    <div class="row2"><div class="fi"><label>Spiritual Gems Conductor (10 min)</label><input type="text" id="mw-gems-who"></div><div class="fi"><label>Bible Reading Student (4 min)</label><input type="text" id="mw-bible-read"></div></div>
+    <div class="fi"><label>Middle Song No.</label><input type="text" id="mw-song2" placeholder="e.g. 88"></div>
+    <div class="hr"></div>
+    <div class="sec-head">2 - Apply Yourself to the Field Ministry (15 min)</div>
+    <div class="aply-part"><div class="aply-lbl">Part 1</div>
+      <div class="row2"><div class="fi"><label>Assignment Type</label><select id="mw-p1-type"><option value="">Select type</option><option value="Starting a Conversation">Starting a Conversation (3 min)</option><option value="Follow-Up">Follow-Up (4 min)</option><option value="Talk">Talk (5 min)</option><option value="Bible Study">Bible Study (6 min)</option><option value="House to House">House to House</option><option value="Public Witnessing">Public Witnessing</option><option value="Informal Witnessing">Informal Witnessing</option><option value="Discussion">Discussion (Elder/MS)</option></select></div><div class="fi"><label>Study Point / Theme</label><input type="text" id="mw-p1-theme" placeholder="e.g. Be Natural and Warm"></div></div>
+      <div class="row2"><div class="fi"><label>Student</label><input type="text" id="mw-p1-student"></div><div class="fi"><label>Assistant / Householder</label><input type="text" id="mw-p1-asst"></div></div>
+    </div>
+    <div class="aply-part"><div class="aply-lbl">Part 2</div>
+      <div class="row2"><div class="fi"><label>Assignment Type</label><select id="mw-p2-type"><option value="">Select type</option><option value="Starting a Conversation">Starting a Conversation (3 min)</option><option value="Follow-Up">Follow-Up (4 min)</option><option value="Talk">Talk (5 min)</option><option value="Bible Study">Bible Study (6 min)</option><option value="House to House">House to House</option><option value="Public Witnessing">Public Witnessing</option><option value="Informal Witnessing">Informal Witnessing</option><option value="Discussion">Discussion (Elder/MS)</option></select></div><div class="fi"><label>Study Point / Theme</label><input type="text" id="mw-p2-theme"></div></div>
+      <div class="row2"><div class="fi"><label>Student</label><input type="text" id="mw-p2-student"></div><div class="fi"><label>Assistant / Householder</label><input type="text" id="mw-p2-asst"></div></div>
+    </div>
+    <div class="aply-part"><div class="aply-lbl">Part 3 (if applicable)</div>
+      <div class="row2"><div class="fi"><label>Assignment Type</label><select id="mw-p3-type"><option value="">Not used</option><option value="Starting a Conversation">Starting a Conversation (3 min)</option><option value="Follow-Up">Follow-Up (4 min)</option><option value="Talk">Talk (5 min)</option><option value="Bible Study">Bible Study (6 min)</option><option value="House to House">House to House</option><option value="Public Witnessing">Public Witnessing</option><option value="Discussion">Discussion (Elder/MS)</option></select></div><div class="fi"><label>Study Point / Theme</label><input type="text" id="mw-p3-theme"></div></div>
+      <div class="row2"><div class="fi"><label>Student</label><input type="text" id="mw-p3-student"></div><div class="fi"><label>Assistant / Householder</label><input type="text" id="mw-p3-asst"></div></div>
+    </div>
+    <div class="aply-part"><div class="aply-lbl">Part 4 (if applicable)</div>
+      <div class="row2"><div class="fi"><label>Assignment Type</label><select id="mw-p4-type"><option value="">Not used</option><option value="Starting a Conversation">Starting a Conversation (3 min)</option><option value="Follow-Up">Follow-Up (4 min)</option><option value="Talk">Talk (5 min)</option><option value="Bible Study">Bible Study (6 min)</option><option value="House to House">House to House</option><option value="Public Witnessing">Public Witnessing</option><option value="Discussion">Discussion (Elder/MS)</option></select></div><div class="fi"><label>Study Point / Theme</label><input type="text" id="mw-p4-theme"></div></div>
+      <div class="row2"><div class="fi"><label>Student</label><input type="text" id="mw-p4-student"></div><div class="fi"><label>Assistant / Householder</label><input type="text" id="mw-p4-asst"></div></div>
+    </div>
+    <div class="hr"></div>
+    <div class="sec-head">3 - Living as Christians (30 min)</div>
+    <div class="row2"><div class="fi"><label>Part 1 Title</label><input type="text" id="mw-lac1-title" placeholder="e.g. Local Needs"></div><div class="fi"><label>Speaker / Conductor</label><input type="text" id="mw-lac1-who"></div></div>
+    <div class="row2"><div class="fi"><label>Part 2 Title (optional)</label><input type="text" id="mw-lac2-title"></div><div class="fi"><label>Speaker</label><input type="text" id="mw-lac2-who"></div></div>
+    <div class="row2"><div class="fi"><label>CBS Conductor</label><input type="text" id="mw-cbs-cond"></div><div class="fi"><label>CBS Reader</label><input type="text" id="mw-cbs-read"></div></div>
+    <div class="row2"><div class="fi"><label>Closing Song No.</label><input type="text" id="mw-song3" placeholder="e.g. 134"></div><div class="fi"><label>Closing Prayer</label><input type="text" id="mw-pray-close"></div></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeM('m-mw')">Cancel</button><button class="btn btn-primary" onclick="saveMW()">Save Schedule</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="m-wk">
+  <div class="modal-box">
+    <div class="modal-title">Weekend Meeting Schedule</div>
+    <div class="row2"><div class="fi"><label>Date</label><input type="date" id="wk-date"></div><div class="fi"><label>Time</label><input type="time" id="wk-time" value="10:00"></div></div>
+    <div class="row2"><div class="fi"><label>Opening Song No.</label><input type="text" id="wk-song1"></div><div class="fi"><label>Chairman</label><input type="text" id="wk-chairman"></div></div>
+    <div class="row2"><div class="fi"><label>Opening Prayer</label><input type="text" id="wk-pray-open"></div><div class="fi"><label>Closing Prayer</label><input type="text" id="wk-pray-close"></div></div>
+    <div class="hr"></div>
+    <div class="sec-head">Public Talk</div>
+    <div class="fi"><label>Talk Title</label><input type="text" id="wk-talk-title"></div>
+    <div class="fi"><label>Speaker (Brother and Congregation)</label><input type="text" id="wk-speaker" placeholder="e.g. Bro. James, Downtown Cong."></div>
+    <div class="hr"></div>
+    <div class="sec-head">Watchtower Study</div>
+    <div class="fi"><label>Article Title</label><input type="text" id="wk-wt-title"></div>
+    <div class="row2"><div class="fi"><label>Conductor</label><input type="text" id="wk-wt-cond"></div><div class="fi"><label>Reader</label><input type="text" id="wk-wt-read"></div></div>
+    <div class="fi"><label>Closing Song No.</label><input type="text" id="wk-song2"></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeM('m-wk')">Cancel</button><button class="btn btn-primary" onclick="saveWK()">Save Schedule</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="m-fsm">
+  <div class="modal-box">
+    <div class="modal-title">Field Service Meeting</div>
+    <div class="row2"><div class="fi"><label>Date</label><input type="date" id="fsm-date"></div><div class="fi"><label>Time</label><input type="time" id="fsm-time" value="09:00"></div></div>
+    <div class="fi"><label>Meeting Place / Host</label><input type="text" id="fsm-place" placeholder="Kingdom Hall or Brother's home"></div>
+    <div class="fi"><label>Address</label><input type="text" id="fsm-address"></div>
+    <div class="row2"><div class="fi"><label>Group</label><select id="fsm-group"><option value="All">All Groups</option></select></div><div class="fi"><label>Conductor</label><input type="text" id="fsm-conductor"></div></div>
+    <div class="fi"><label>Territory / Area</label><input type="text" id="fsm-territory"></div>
+    <div class="fi"><label>Notes</label><textarea id="fsm-notes" rows="2"></textarea></div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeM('m-fsm')">Cancel</button><button class="btn btn-primary" onclick="saveFSM()">Save Meeting</button></div>
+  </div>
+</div>
+
+<!-- NOTIFICATION PANEL -->
+<div class="np-bd" id="np-bd" onclick="closeNP()"></div>
+<div class="np-panel" id="np-panel">
+  <div class="np-head">
+    <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700">Notifications</div>
+    <div style="display:flex;gap:7px;align-items:center">
+      <button onclick="markAllRead()" style="font-size:11px;background:rgba(255,255,255,0.15);border:none;color:#fff;padding:4px 9px;border-radius:5px;cursor:pointer;font-weight:700">Mark all read</button>
+      <button onclick="closeNP()" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1;padding:0 3px">&#x2715;</button>
+    </div>
+  </div>
+  <div class="np-list" id="np-list"></div>
+  <div class="np-foot"><button onclick="reqPush()" id="push-btn" style="width:100%;padding:10px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Lato',sans-serif">Enable Push Notifications</button></div>
+</div>
+
+<div id="toast"></div>
+<div id="install-banner">
+  <div style="display:flex;align-items:center;gap:11px"><img src="icons/icon-192.png" style="width:38px;height:38px;border-radius:9px"><div><div style="font-weight:700;font-size:13px">Install Ministry App</div><div style="font-size:11px;opacity:0.5">Works offline on your home screen</div></div></div>
+  <div style="display:flex;gap:7px"><button onclick="document.getElementById('install-banner').style.display='none'" style="background:rgba(255,255,255,0.15);border:none;color:#fff;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:13px">Later</button><button onclick="installPWA()" style="background:var(--gold);border:none;color:var(--navy);padding:7px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700">Install</button></div>
+</div>
+
+<script>
+// ============================================================
+// DATA LAYER — Google Apps Script (GET-only, works from any origin)
+// ============================================================
+// Admin sets the GAS Web App URL once in Admin → Data tab.
+// All devices (including publishers) use the same URL to sync.
+
+var GAS_URL   = localStorage.getItem('cma_gas_url') || '';
+var SYNC_READY = !!GAS_URL;
+var _pushDebounce = null;
+var _syncTimer    = null;
+
+function lcGet(k,def){try{var v=localStorage.getItem('cma_'+k);return v!==null?JSON.parse(v):def;}catch(e){return def;}}
+function lcSet(k,v){try{localStorage.setItem('cma_'+k,JSON.stringify(v));}catch(e){}}
+
+var groups     = lcGet('groups',null);
+var publishers = lcGet('publishers',null);
+var reports    = lcGet('reports',[]);
+var midweeks   = lcGet('midweeks',[]);
+var weekends   = lcGet('weekends',[]);
+var fsms       = lcGet('fsms',[]);
+var notifs     = lcGet('notifs',[]);
+var zoomInfo   = lcGet('zoomInfo',{midweekId:'',midweekPass:'',midweekLink:'',weekendId:'',weekendPass:'',weekendLink:''});
+
+if(!groups||groups.length===0){
+  groups=[{id:'g1',name:'Group 1',overseer:'',assistant:''},{id:'g2',name:'Group 2',overseer:'',assistant:''},{id:'g3',name:'Group 3',overseer:'',assistant:''},{id:'g4',name:'Group 4',overseer:'',assistant:''},{id:'g5',name:'Group 5',overseer:'',assistant:''},{id:'g6',name:'Group 6',overseer:'',assistant:''}];
+  lcSet('groups',groups);
+} else {
+  groups.forEach(function(g){if(!g.assistant)g.assistant='';if(!g.overseer)g.overseer='';});
+}
+if(!publishers||publishers.length===0){
+  publishers=[{id:'admin1',name:'Administrator',pin:'0000',group:'',role:'elder',isAdmin:true}];
+  lcSet('publishers',publishers);
+}
+
+// ── Sync status dot ───────────────────────────────────────
+function setSyncStatus(s){
+  var m={syncing:['🔄','Syncing…','#c8a94a'],ok:['✅','Synced','#4caf50'],error:['⚠️','Sync error','#e53935'],nokey:['🔑','Not set up','#888'],offline:['📴','Offline','#888']};
+  var info=m[s]||m.offline;
+  document.querySelectorAll('.sync-dot').forEach(function(el){el.textContent=info[0]+' '+info[1];el.style.color=info[2];});
+}
+
+// ── Google Apps Script API (GET-only, no CORS issues) ─────
+function gasRead(cb){
+  if(!GAS_URL){cb('not_configured',null);return;}
+  var xhr=new XMLHttpRequest();
+  xhr.open('GET',GAS_URL,true);
+  xhr.timeout=20000;
+  xhr.onload=function(){
+    if(xhr.status===0||xhr.status===200){
+      try{cb(null,JSON.parse(xhr.responseText));}
+      catch(e){cb('bad_json',null);}
+    }else cb('http_'+xhr.status,null);
+  };
+  xhr.onerror=function(){cb('network',null);};
+  xhr.ontimeout=function(){cb('timeout',null);};
+  xhr.send();
+}
+
+function gasWrite(data,cb){
+  if(!GAS_URL){if(cb)cb('not_configured',null);return;}
+  var encoded=encodeURIComponent(JSON.stringify(data));
+  var xhr=new XMLHttpRequest();
+  xhr.open('GET',GAS_URL+'?d='+encoded,true);
+  xhr.timeout=20000;
+  xhr.onload=function(){
+    if(xhr.status===0||xhr.status===200){if(cb)cb(null,true);}
+    else{if(cb)cb('http_'+xhr.status,null);}
+  };
+  xhr.onerror=function(){if(cb)cb('network',null);};
+  xhr.ontimeout=function(){if(cb)cb('timeout',null);};
+  xhr.send();
+}
+
+// ── Save: local immediately, cloud debounced ──────────────
+function saveAll(){
+  lcSet('groups',groups);lcSet('publishers',publishers);lcSet('reports',reports);
+  lcSet('midweeks',midweeks);lcSet('weekends',weekends);lcSet('fsms',fsms);
+  lcSet('notifs',notifs);lcSet('zoomInfo',zoomInfo);
+  if(SYNC_READY){clearTimeout(_pushDebounce);_pushDebounce=setTimeout(pushToCloud,1200);}
+}
+
+function pushToCloud(){
+  setSyncStatus('syncing');
+  gasWrite({groups:groups,publishers:publishers,reports:reports,
+    midweeks:midweeks,weekends:weekends,fsms:fsms,zoomInfo:zoomInfo,_ts:Date.now()},
+    function(err){setSyncStatus(err?'error':'ok');if(err)console.warn('[sync]',err);});
+}
+
+// ── Pull from cloud ───────────────────────────────────────
+function pullFromCloud(onDone){
+  if(!SYNC_READY){setSyncStatus('nokey');if(onDone)onDone(false);return;}
+  setSyncStatus('syncing');
+  gasRead(function(err,data){
+    if(err||!data){setSyncStatus(err==='network'||err==='timeout'?'offline':'error');if(onDone)onDone(false);return;}
+    var ch=false;
+    ['groups','publishers','reports','midweeks','weekends','fsms'].forEach(function(k){
+      if(data[k]&&Array.isArray(data[k])&&data[k].length>0){window[k]=data[k];lcSet(k,data[k]);ch=true;}
+    });
+    if(data.zoomInfo){zoomInfo=data.zoomInfo;lcSet('zoomInfo',zoomInfo);}
+    setSyncStatus('ok');
+    if(onDone)onDone(ch);
+  });
+}
+
+// ── Auto-sync every 20 s ──────────────────────────────────
+function startAutoSync(){
+  if(_syncTimer)clearInterval(_syncTimer);
+  _syncTimer=setInterval(function(){
+    if(!currentUser||!SYNC_READY)return;
+    pullFromCloud(function(ch){
+      if(!ch)return;
+      try{
+        if(currentUser.isAdmin){renderAdmHome();renderAdmReports();renderPubs();renderAdmMW();renderAdmWK();renderAdmFSM();renderGroups();}
+        else{renderPubHome();renderPubMW();renderPubWK();renderPubFSM();}
+        updateBadge();
+      }catch(e){}
+    });
+  },20000);
+}
+
+window.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')saveAll();});
+window.addEventListener('pagehide',function(){saveAll();});
+
+// ============================================================
+// HELPERS
+// ============================================================
+var currentUser=null,loginRole='publisher';
+function gv(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+function sv(id,v){var e=document.getElementById(id);if(e)e.value=v;}
+function uid(){return '_'+Math.random().toString(36).slice(2,9);}
+function fmtTime(t){if(!t)return'';var p=t.split(':'),h=parseInt(p[0]),m=p[1];return(h>12?h-12:h||12)+':'+m+' '+(h>=12?'PM':'AM');}
+function fmtDate(d){var dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('en',{weekday:'long',month:'long',day:'numeric',year:'numeric'});}
+function fmtDateS(d){var dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric'});}
+function fmtMonth(m){var d=new Date(m+'-01T12:00:00');return d.toLocaleString('default',{month:'long',year:'numeric'});}
+function groupById(id){for(var i=0;i<groups.length;i++)if(groups[i].id===id)return groups[i];return null;}
+function pubById(id){for(var i=0;i<publishers.length;i++)if(publishers[i].id===id)return publishers[i];return null;}
+function roleBadge(r){var m={elder:'b-navy',pioneer:'b-green',ms:'b-gold',publisher:'b-gray'},l={elder:'Elder',pioneer:'Pioneer',ms:'Min. Servant',publisher:'Publisher'};return'<span class="badge '+(m[r]||'b-gray')+'">'+(l[r]||r)+'</span>';}
+function avColor(r){if(r==='elder')return'#1b2d4f';if(r==='pioneer')return'#3d7a52';if(r==='ms')return'#b8860b';return'#7a8a9a';}
+function sRow(lbl,val){return'<div class="s-row"><div class="s-lbl">'+lbl+'</div><div class="s-val">'+(val||'&mdash;')+'</div></div>';}
+function sHead(lbl,col){return'<div class="s-hd" style="background:'+col+'">'+lbl+'</div>';}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3000);}
+function openM(id){document.getElementById(id).classList.add('open');}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');}
+
+document.querySelectorAll('.modal-bg').forEach(function(el){el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});});
+
+function confirm2(msg,cb){
+  var o=document.createElement('div');o.className='cfm-bg';
+  o.innerHTML='<div class="cfm-box"><div style="font-size:30px;margin-bottom:10px">&#9888;&#65039;</div><div style="font-size:14px;margin-bottom:18px;line-height:1.5">'+msg+'</div><div style="display:flex;gap:9px;justify-content:center"><button id="cfm-no" style="padding:9px 20px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;font-family:Lato,sans-serif;font-size:14px;font-weight:700">Cancel</button><button id="cfm-yes" style="padding:9px 20px;border-radius:8px;border:none;background:#883333;color:#fff;cursor:pointer;font-family:Lato,sans-serif;font-size:14px;font-weight:700">Delete</button></div></div>';
+  document.body.appendChild(o);
+  document.getElementById('cfm-no').onclick=function(){o.remove();};
+  document.getElementById('cfm-yes').onclick=function(){o.remove();cb();};
+}
+
+function fillGrpSelect(selId,selectedVal,withAll){
+  var s=document.getElementById(selId);if(!s)return;
+  s.innerHTML=withAll?'<option value="All">All Groups</option>':'<option value="">No group</option>';
+  groups.forEach(function(g){var o=document.createElement('option');o.value=g.id;o.textContent=g.name;if(selectedVal===g.id)o.selected=true;s.appendChild(o);});
+}
+function fillAllGrps(){
+  fillGrpSelect('np-group','',false);fillGrpSelect('ep-group','',false);fillGrpSelect('fsm-group','',true);
+  fillGrpSelect('rpt-group','',false);fillGrpSelect('pub-gfil','',false);fillGrpSelect('fil-group','',false);
+}
+
+// ============================================================
+// LANDING
+// ============================================================
+function switchTab(tab){
+  var isLogin=(tab==='login');
+  document.getElementById('form-login').style.display=isLogin?'block':'none';
+  document.getElementById('form-reg').style.display=isLogin?'none':'block';
+  document.getElementById('login-err').style.display='none';
+  document.getElementById('reg-err').style.display='none';
+  document.getElementById('tab-login').style.background=isLogin?'var(--gold)':'transparent';
+  document.getElementById('tab-login').style.color=isLogin?'var(--navy)':'rgba(255,255,255,0.5)';
+  document.getElementById('tab-reg').style.background=isLogin?'transparent':'var(--gold)';
+  document.getElementById('tab-reg').style.color=isLogin?'rgba(255,255,255,0.5)':'var(--navy)';
+  if(!isLogin){
+    var sel=document.getElementById('reg-group');
+    sel.innerHTML='<option value="">No group assigned yet</option>';
+    groups.forEach(function(g){var o=document.createElement('option');o.value=g.id;o.textContent=g.name;sel.appendChild(o);});
+    setTimeout(function(){document.getElementById('reg-name').focus();},100);
+  } else {
+    setTimeout(function(){document.getElementById('inp-name').focus();},100);
+  }
+}
+function doRegister(){
+  var name=document.getElementById('reg-name').value.trim();
+  var pin=document.getElementById('reg-pin').value.trim();
+  var pin2=document.getElementById('reg-pin2').value.trim();
+  var grp=document.getElementById('reg-group').value;
+  var err=document.getElementById('reg-err');
+  err.style.display='none';
+  if(!name){err.textContent='Please enter your full name.';err.style.display='block';return;}
+  if(!pin||pin.length<4){err.textContent='PIN must be at least 4 digits.';err.style.display='block';return;}
+  if(pin!==pin2){err.textContent='PINs do not match. Please try again.';err.style.display='block';return;}
+  for(var i=0;i<publishers.length;i++){
+    if(publishers[i].name.toLowerCase()===name.toLowerCase()){err.textContent='Account already exists. Please sign in instead.';err.style.display='block';return;}
+  }
+  var newPub={id:'p'+uid(),name:name,pin:pin,group:grp,role:'publisher',isAdmin:false};
+  publishers.push(newPub);
+  saveAll();
+  currentUser=newPub;
+  launchPublisher();
+}
+function showLogin(role){
+  loginRole=role;
+  document.getElementById('v-home').style.display='none';
+  document.getElementById('v-login').style.display='flex';
+  document.getElementById('login-title').textContent=role==='admin'?'Admin Login':'Publisher Portal';
+  document.getElementById('login-sub').textContent=role==='admin'?'ACS / Elder access':'Sign in or create your account';
+  document.getElementById('login-err').style.display='none';
+  document.getElementById('inp-name').value='';
+  document.getElementById('inp-pin').value='';
+  // Show/hide register tab based on role
+  var tabs=document.getElementById('reg-tabs');
+  tabs.style.display=(role==='admin')?'none':'flex';
+  // Always start on Sign In tab
+  switchTab('login');
+}
+function showHome(){document.getElementById('v-home').style.display='flex';document.getElementById('v-login').style.display='none';}
+
+document.getElementById('inp-name').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('inp-pin').focus();});
+document.getElementById('inp-pin').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+
+function doLogin(){
+  var name=document.getElementById('inp-name').value.trim();
+  var pin=document.getElementById('inp-pin').value.trim();
+  var err=document.getElementById('login-err');
+  err.style.display='none';
+  if(!name||!pin){err.textContent='Please enter your name and PIN.';err.style.display='block';return;}
+  // Check login against latest publisher list
+  function attemptLogin(){
+    var user=null;
+    for(var i=0;i<publishers.length;i++){
+      if(publishers[i].name.toLowerCase()===name.toLowerCase()&&publishers[i].pin===pin){user=publishers[i];break;}
+    }
+    if(!user){err.textContent='Name or PIN not found. Please try again.';err.style.display='block';return;}
+    if(loginRole==='admin'&&!user.isAdmin){err.textContent='You do not have admin access.';err.style.display='block';return;}
+    currentUser=user;
+    if(user.isAdmin)launchAdmin();else launchPublisher();
+  }
+  // Pull from cloud so we always have the latest publishers
+  err.textContent='Checking…';err.style.display='block';err.style.background='rgba(0,50,120,0.3)';err.style.color='#aad4ff';
+  pullFromCloud(function(){
+    err.style.display='none';err.style.background='';err.style.color='';
+    attemptLogin();
+  });
+}
+function doSignOut(){currentUser=null;showScreen('screen-landing');showHome();}
+
+// ============================================================
+// PUBLISHER
+// ============================================================
+function launchPublisher(){
+  showScreen('screen-pub');
+  var now=new Date();
+  document.getElementById('pub-pill').textContent=currentUser.name;
+  document.getElementById('pub-welcome').textContent='Welcome, '+currentUser.name.split(' ')[0]+'!';
+  document.getElementById('pub-mlbl').textContent=now.toLocaleString('default',{month:'long',year:'numeric'});
+  // Show GAS url in publisher sync tab if already saved
+  var pgi=document.getElementById('pub-gas-url-input'); if(pgi&&GAS_URL)pgi.value=GAS_URL;
+  var pgs=document.getElementById('pub-gas-status');
+  if(pgs){pgs.textContent=GAS_URL?'✅ Connected — syncing automatically.':'Paste the Web App URL from your admin to enable sync.';}
+  document.getElementById('pub-rpt-sub').textContent='Report for '+now.toLocaleString('default',{month:'long',year:'numeric'});
+  sv('rpt-month',now.toISOString().slice(0,7));
+  fillAllGrps();
+  fillGrpSelect('rpt-group',currentUser.group,false);
+  // Show local data instantly, then refresh from cloud
+  renderPubHome();renderPubMW();renderPubWK();renderPubFSM();
+  updateBadge();
+  setSyncStatus('syncing');
+  pullFromCloud(function(){
+    // Re-render with fresh data
+    fillAllGrps();fillGrpSelect('rpt-group',currentUser.group,false);
+    renderPubHome();renderPubMW();renderPubWK();renderPubFSM();
+    updateBadge();
+  });
+  startAutoSync();
+  setTimeout(checkReminders,2000);
+}
+function pubNav(btn,tid){
+  ['pt-home','pt-report','pt-midweek','pt-weekend','pt-fsm','pt-sync'].forEach(function(t){document.getElementById(t).style.display='none';});
+  document.getElementById(tid).style.display='block';
+  document.querySelectorAll('#screen-pub .nav-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+}
+function renderPubHome(){
+  var now=new Date(), mk=now.toISOString().slice(0,7), myRpt=null;
+  for(var i=0;i<reports.length;i++){if(reports[i].pid===currentUser.id&&reports[i].month===mk){myRpt=reports[i];break;}}
+  var rEl=document.getElementById('pub-my-rpt');
+  if(myRpt){
+    rEl.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">'+miniStat('Hours',myRpt.hours)+miniStat('Return Visits',myRpt.rv)+miniStat('Bible Studies',myRpt.bs)+miniStat('Placements',myRpt.placements)+'</div>'+(myRpt.notes?'<div style="margin-top:10px;font-size:13px;color:var(--muted);font-style:italic">'+myRpt.notes+'</div>':'')+'<div style="margin-top:11px"><span class="badge b-green">Submitted '+myRpt.submitted+'</span></div>';
+  } else {
+    rEl.innerHTML='<div class="empty"><div class="empty-icon">&#128203;</div>No report yet this month.</div>';
+  }
+
+  // Build upcoming events
+  var today=now.toISOString().split('T')[0], evs=[];
+  midweeks.forEach(function(m){if(m.date>=today)evs.push({date:m.date,type:'midweek',label:'Midweek Meeting',sub:(m.chairman?'Chairman: '+m.chairman:''),obj:m});});
+  weekends.forEach(function(w){if(w.date>=today)evs.push({date:w.date,type:'weekend',label:'Weekend Meeting',sub:(w.speaker?'Speaker: '+w.speaker:''),obj:w});});
+  fsms.forEach(function(f){if(f.date>=today&&(f.group==='All'||f.group===currentUser.group))evs.push({date:f.date,type:'fsm',label:'Field Service @ '+f.place,sub:f.address||''});});
+  evs.sort(function(a,b){return a.date.localeCompare(b.date);});
+
+  // ── Meeting banner: show next meeting with zoom + part for publisher ──
+  var banner=document.getElementById('pub-next-meeting-title');
+  var bannerDate=document.getElementById('pub-next-meeting-date');
+  var bannerPart=document.getElementById('pub-next-meeting-part');
+  var zoomBox=document.getElementById('pub-zoom-box');
+  var nextMtg=evs.find(function(e){return e.type==='midweek'||e.type==='weekend';});
+  if(nextMtg){
+    banner.textContent=nextMtg.label;
+    var d=new Date(nextMtg.date+'T12:00:00');
+    bannerDate.textContent=d.toLocaleDateString('en',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+(nextMtg.obj&&nextMtg.obj.time?' at '+fmtTime(nextMtg.obj.time):'');
+    // Show publisher's part for this meeting if any
+    var partText='';
+    if(nextMtg.type==='midweek'&&nextMtg.obj){
+      var m=nextMtg.obj, pn=currentUser.name.toLowerCase();
+      var parts=[
+        {role:'Chairman',who:m.chairman},{role:'Opening Prayer',who:m.prayOpen},{role:'Talk',who:m.talkWho},
+        {role:'Spiritual Gems',who:m.gemsWho},{role:'Bible Reading',who:m.bibleRead},
+        {role:m.p1Type||'Ministry Part 1',who:m.p1Student},{role:m.p2Type||'Ministry Part 2',who:m.p2Student},
+        {role:m.p3Type||'Ministry Part 3',who:m.p3Student},{role:m.p4Type||'Ministry Part 4',who:m.p4Student},
+        {role:m.lac1Title||'Living as Christians',who:m.lac1Who},{role:'CBS Conductor',who:m.cbsCond},
+        {role:'CBS Reader',who:m.cbsRead},{role:'Closing Prayer',who:m.prayClose}
+      ];
+      parts.forEach(function(p){if(p.who&&p.who.toLowerCase().indexOf(pn.split(' ')[0])>-1){partText+=p.role+'<br>';}});
+    }
+    if(nextMtg.type==='weekend'&&nextMtg.obj){
+      var w=nextMtg.obj, pn=currentUser.name.toLowerCase();
+      [{role:'Chairman',who:w.chairman},{role:'Public Talk Speaker',who:w.speaker},
+       {role:'Watchtower Conductor',who:w.wtCond},{role:'Watchtower Reader',who:w.wtRead},
+       {role:'Opening Prayer',who:w.prayOpen},{role:'Closing Prayer',who:w.prayClose}
+      ].forEach(function(p){if(p.who&&p.who.toLowerCase().indexOf(pn.split(' ')[0])>-1){partText+=p.role+'<br>';}});
+    }
+    if(partText){
+      bannerPart.innerHTML='<span style="font-size:10px;font-weight:700;letter-spacing:1px;opacity:0.7;text-transform:uppercase">Your Part</span><br>'+partText;
+      bannerPart.style.display='block';
+    } else {
+      bannerPart.style.display='none';
+    }
+    // Zoom details
+    var z=zoomInfo||{}, isMW=nextMtg.type==='midweek';
+    var zId=isMW?z.midweekId:z.weekendId, zPass=isMW?z.midweekPass:z.weekendPass, zLink=isMW?z.midweekLink:z.weekendLink;
+    if(zId||zLink){
+      zoomBox.style.display='block';
+      document.getElementById('pub-zoom-id').textContent=zId?'ID: '+zId:'';
+      document.getElementById('pub-zoom-pass').textContent=zPass?'Pass: '+zPass:'';
+      var la=document.getElementById('pub-zoom-link');
+      if(zLink){la.href=zLink;la.style.display='inline-block';}else la.style.display='none';
+    } else {zoomBox.style.display='none';}
+  } else {
+    banner.textContent='No upcoming meetings';
+    bannerDate.textContent=''; bannerPart.style.display='none'; zoomBox.style.display='none';
+  }
+
+  // Upcoming list
+  var uEl=document.getElementById('pub-upcoming');
+  var list=evs.slice(0,6);
+  if(!list.length){uEl.innerHTML='<div style="color:var(--muted);font-size:13px">No upcoming meetings scheduled.</div>';return;}
+  uEl.innerHTML=list.map(function(ev){
+    var dt=new Date(ev.date+'T12:00:00');
+    return'<div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)"><div style="background:var(--navy);color:#fff;border-radius:8px;padding:6px 9px;text-align:center;min-width:40px;flex-shrink:0"><div style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:700;line-height:1">'+dt.getDate()+'</div><div style="font-size:9px;opacity:0.65;text-transform:uppercase">'+dt.toLocaleDateString('en',{month:'short'})+'</div></div><div><div style="font-weight:700;font-size:14px">'+ev.label+'</div>'+(ev.sub?'<div style="font-size:12px;color:var(--muted)">'+ev.sub+'</div>':'')+'</div></div>';
+  }).join('');
+}
+function miniStat(l,v){return'<div style="background:var(--cream);border-radius:8px;padding:11px;text-align:center"><div style="font-family:\'Playfair Display\',serif;font-size:22px;font-weight:800;color:var(--navy)">'+(v||0)+'</div><div style="font-size:11px;color:var(--muted);margin-top:2px">'+l+'</div></div>';}
+
+function submitReport(){
+  var month=gv('rpt-month'),grp=gv('rpt-group');
+  if(!month){toast('Please select a month.');return;}
+  if(!grp){toast('Please select your group.');return;}
+  var rec={id:'r'+uid(),pid:currentUser.id,pname:currentUser.name,gid:grp,month:month,hours:parseFloat(document.getElementById('rpt-hours').value)||0,rv:parseInt(document.getElementById('rpt-rv').value)||0,bs:parseInt(document.getElementById('rpt-bs').value)||0,placements:parseInt(document.getElementById('rpt-placements').value)||0,notes:gv('rpt-notes'),submitted:new Date().toLocaleDateString()};
+  var found=false;for(var i=0;i<reports.length;i++){if(reports[i].pid===currentUser.id&&reports[i].month===month){reports[i]=rec;found=true;break;}}
+  if(!found)reports.push(rec);
+  saveAll();toast('Report submitted!');renderPubHome();
+}
+
+function renderPubMW(){var el=document.getElementById('pub-mw-list');var list=midweeks.slice().sort(function(a,b){return b.date.localeCompare(a.date);});el.innerHTML=list.length?list.map(buildMWCard).join(''):'<div class="empty"><div class="empty-icon">&#128214;</div>No midweek schedules yet.</div>';}
+function renderPubWK(){var el=document.getElementById('pub-wk-list');var list=weekends.slice().sort(function(a,b){return b.date.localeCompare(a.date);});el.innerHTML=list.length?list.map(buildWKCard).join(''):'<div class="empty"><div class="empty-icon">&#127908;</div>No weekend schedules yet.</div>';}
+function renderPubFSM(){var el=document.getElementById('pub-fsm-list');var today=new Date().toISOString().split('T')[0];var list=fsms.filter(function(f){return f.date>=today&&(f.group==='All'||f.group===currentUser.group);}).sort(function(a,b){return a.date.localeCompare(b.date);});el.innerHTML=list.length?list.map(buildFSMCard).join(''):'<div class="empty"><div class="empty-icon">&#127807;</div>No upcoming field service meetings.</div>';}
+
+function buildMWCard(m){
+  var p1='',p2='',p3='',p4='';
+  if(m.p1Type||m.p1Student){var lb=(m.p1Type||'Part 1')+(m.p1Theme?' - '+m.p1Theme:'');var vl=[];if(m.p1Student)vl.push('Student: '+m.p1Student);if(m.p1Asst)vl.push('Asst: '+m.p1Asst);p1=sRow(lb,vl.join(' / '));}
+  if(m.p2Type||m.p2Student){var lb=(m.p2Type||'Part 2')+(m.p2Theme?' - '+m.p2Theme:'');var vl=[];if(m.p2Student)vl.push('Student: '+m.p2Student);if(m.p2Asst)vl.push('Asst: '+m.p2Asst);p2=sRow(lb,vl.join(' / '));}
+  if(m.p3Type||m.p3Student){var lb=(m.p3Type||'Part 3')+(m.p3Theme?' - '+m.p3Theme:'');var vl=[];if(m.p3Student)vl.push('Student: '+m.p3Student);if(m.p3Asst)vl.push('Asst: '+m.p3Asst);p3=sRow(lb,vl.join(' / '));}
+  if(m.p4Type||m.p4Student){var lb=(m.p4Type||'Part 4')+(m.p4Theme?' - '+m.p4Theme:'');var vl=[];if(m.p4Student)vl.push('Student: '+m.p4Student);if(m.p4Asst)vl.push('Asst: '+m.p4Asst);p4=sRow(lb,vl.join(' / '));}
+  return'<div class="sched-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:7px;margin-bottom:14px"><div><div style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:700;color:var(--navy)">Week of '+fmtDate(m.date)+'</div><div style="font-size:13px;color:var(--muted);margin-top:2px">'+fmtTime(m.time)+'</div></div><span class="badge b-navy">Midweek</span></div>'+
+  '<div class="s-sec">'+sHead('Opening','#c8a94a')+sRow('Opening Song',m.song1)+sRow('Chairman',m.chairman)+sRow('Opening Prayer',m.prayOpen)+'</div>'+
+  '<div class="s-sec">'+sHead('1 - Treasures From God\'s Word','#1b2d4f')+sRow('Talk (10 min)',(m.talk||'')+(m.talkWho?' - '+m.talkWho:''))+sRow('Spiritual Gems (10 min)',m.gemsWho)+sRow('Bible Reading (4 min)',m.bibleRead)+(m.song2?sRow('Middle Song',m.song2):'')+'</div>'+
+  '<div class="s-sec">'+sHead('2 - Apply Yourself to the Field Ministry','#3d7a52')+p1+p2+p3+p4+'</div>'+
+  '<div class="s-sec">'+sHead('3 - Living as Christians','#5a4a2a')+(m.lac1Title||m.lac1Who?sRow(m.lac1Title||'Part 1',m.lac1Who):'')+sRow('CBS Conductor',m.cbsCond)+sRow('CBS Reader',m.cbsRead)+(m.song3?sRow('Closing Song',m.song3):'')+sRow('Closing Prayer',m.prayClose)+'</div></div>';
+}
+function buildWKCard(w){
+  return'<div class="sched-card"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:7px;margin-bottom:14px"><div><div style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:700;color:var(--navy)">'+fmtDate(w.date)+'</div><div style="font-size:13px;color:var(--muted);margin-top:2px">'+fmtTime(w.time)+'</div></div><span class="badge b-green">Weekend</span></div>'+
+  '<div class="s-sec">'+sHead('Opening','#c8a94a')+sRow('Opening Song',w.song1)+sRow('Chairman',w.chairman)+sRow('Opening Prayer',w.prayOpen)+'</div>'+
+  '<div class="s-sec">'+sHead('Public Talk','#1b2d4f')+sRow('Title',w.talkTitle)+sRow('Speaker',w.speaker)+'</div>'+
+  '<div class="s-sec">'+sHead('Watchtower Study','#3d7a52')+sRow('Article',w.wtTitle)+sRow('Conductor',w.wtCond)+sRow('Reader',w.wtRead)+(w.song2?sRow('Closing Song',w.song2):'')+sRow('Closing Prayer',w.prayClose)+'</div></div>';
+}
+function buildFSMCard(f){
+  var grp=groupById(f.group),gn=f.group==='All'?'All Groups':(grp?grp.name:'');
+  return'<div class="fsm-card"><div style="font-family:\'Playfair Display\',serif;font-size:16px;font-weight:700;margin-bottom:3px">'+f.place+'</div><div style="font-size:13px;opacity:0.55;margin-bottom:11px">'+fmtDateS(f.date)+' &middot; '+fmtTime(f.time)+'</div><div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px">'+(f.address?'<div><div style="font-size:9px;opacity:0.45;text-transform:uppercase;margin-bottom:1px">Address</div>'+f.address+'</div>':'')+(f.conductor?'<div><div style="font-size:9px;opacity:0.45;text-transform:uppercase;margin-bottom:1px">Conductor</div>'+f.conductor+'</div>':'')+(f.territory?'<div><div style="font-size:9px;opacity:0.45;text-transform:uppercase;margin-bottom:1px">Territory</div>'+f.territory+'</div>':'')+'<div><div style="font-size:9px;opacity:0.45;text-transform:uppercase;margin-bottom:1px">Group</div>'+gn+'</div></div>'+(f.notes?'<div style="margin-top:9px;font-size:12px;opacity:0.55;font-style:italic">'+f.notes+'</div>':'')+'</div>';
+}
+
+// ============================================================
+// ADMIN
+// ============================================================
+function launchAdmin(){
+  showScreen('screen-admin');
+  document.getElementById('adm-pill').textContent=currentUser.name;
+  document.getElementById('adm-mlbl').textContent=new Date().toLocaleString('default',{month:'long',year:'numeric'});
+  var today=new Date().toISOString().split('T')[0];
+  sv('mw-date',today);sv('wk-date',today);sv('fsm-date',today);
+  fillAllGrps();
+  // Render from local cache immediately
+  renderAdmHome();renderAdmReports();renderPubs();renderAdmMW();renderAdmWK();renderAdmFSM();renderGroups();
+  updateBadge();
+  setSyncStatus('syncing');
+  // Re-render with fresh cloud data
+  pullFromCloud(function(){
+    fillAllGrps();
+    renderAdmHome();renderAdmReports();renderPubs();renderAdmMW();renderAdmWK();renderAdmFSM();renderGroups();
+    updateBadge();
+  });
+  startAutoSync();
+  setTimeout(checkReminders,2000);
+}
+function admNav(btn,tid){
+  ['at-home','at-reports','at-publishers','at-midweek','at-weekend','at-fsm','at-groups','at-data'].forEach(function(t){document.getElementById(t).style.display='none';});
+  document.getElementById(tid).style.display='block';
+  document.querySelectorAll('#screen-admin .nav-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  if(tid==='at-data'){renderStorageInfo();updateGASStatusLine();renderZoomSettings();}
+}
+function renderAdmHome(){
+  var mk=new Date().toISOString().slice(0,7);
+  // ── Meeting + Zoom banner for admin ──
+  var today=new Date().toISOString().split('T')[0], evs=[];
+  midweeks.forEach(function(m){if(m.date>=today)evs.push({date:m.date,type:'midweek',label:'Midweek Meeting',sub:m.chairman?'Chairman: '+m.chairman:'',obj:m});});
+  weekends.forEach(function(w){if(w.date>=today)evs.push({date:w.date,type:'weekend',label:'Weekend Meeting',sub:w.speaker?'Speaker: '+w.speaker:'',obj:w});});
+  evs.sort(function(a,b){return a.date.localeCompare(b.date);});
+  var nextMtg=evs[0];
+  var admTitle=document.getElementById('adm-next-title');
+  var admDate=document.getElementById('adm-next-date');
+  var admPart=document.getElementById('adm-next-part');
+  var admZoom=document.getElementById('adm-zoom-box');
+  if(nextMtg&&admTitle){
+    admTitle.textContent=nextMtg.label;
+    var d=new Date(nextMtg.date+'T12:00:00');
+    admDate.textContent=d.toLocaleDateString('en',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+(nextMtg.obj&&nextMtg.obj.time?' at '+fmtTime(nextMtg.obj.time):'');
+    // Show today's parts summary
+    var parts=[];
+    if(nextMtg.type==='midweek'&&nextMtg.obj){
+      var m=nextMtg.obj;
+      if(m.chairman)parts.push('Chairman: '+m.chairman);
+      if(m.talkWho)parts.push('Talk: '+m.talkWho);
+      if(m.gemsWho)parts.push('Gems: '+m.gemsWho);
+      if(m.bibleRead)parts.push('Bible Reading: '+m.bibleRead);
+      if(m.p1Student)parts.push((m.p1Type||'Part 1')+': '+m.p1Student);
+      if(m.p2Student)parts.push((m.p2Type||'Part 2')+': '+m.p2Student);
+      if(m.p3Student)parts.push((m.p3Type||'Part 3')+': '+m.p3Student);
+      if(m.cbsCond)parts.push('CBS: '+m.cbsCond);
+    }
+    if(nextMtg.type==='weekend'&&nextMtg.obj){
+      var w=nextMtg.obj;
+      if(w.speaker)parts.push('Speaker: '+w.speaker);
+      if(w.talkTitle)parts.push('Talk: '+w.talkTitle);
+      if(w.wtCond)parts.push('WT Conductor: '+w.wtCond);
+      if(w.wtRead)parts.push('WT Reader: '+w.wtRead);
+    }
+    if(parts.length&&admPart){
+      admPart.innerHTML='<strong style="font-size:10px;opacity:0.6;text-transform:uppercase;letter-spacing:1px">Parts</strong><br>'+parts.join('<br>');
+      admPart.style.display='block';
+    } else if(admPart) admPart.style.display='none';
+    // Zoom
+    var z=zoomInfo||{}, isMW=nextMtg.type==='midweek';
+    var zId=isMW?z.midweekId:z.weekendId, zPass=isMW?z.midweekPass:z.weekendPass, zLink=isMW?z.midweekLink:z.weekendLink;
+    if((zId||zLink)&&admZoom){
+      admZoom.style.display='block';
+      document.getElementById('adm-zoom-id').textContent=zId?'ID: '+zId:'';
+      document.getElementById('adm-zoom-pass').textContent=zPass?'Pass: '+zPass:'';
+      var la=document.getElementById('adm-zoom-link');
+      if(la){if(zLink){la.href=zLink;la.style.display='inline-block';}else la.style.display='none';}
+    } else if(admZoom) admZoom.style.display='none';
+  } else if(admTitle){
+    admTitle.textContent='No upcoming meetings scheduled';
+    if(admDate)admDate.textContent='';
+    if(admPart)admPart.style.display='none';
+    if(admZoom)admZoom.style.display='none';
+  }
+  var mRpts=reports.filter(function(r){return r.month===mk;});
+  document.getElementById('st-pub').textContent=publishers.filter(function(p){return p.id!=='admin1';}).length;
+  document.getElementById('st-rpt').textContent=mRpts.length;
+  document.getElementById('st-hrs').textContent=mRpts.reduce(function(s,r){return s+r.hours;},0).toFixed(1);
+  document.getElementById('st-bs').textContent=mRpts.reduce(function(s,r){return s+r.bs;},0);
+  var el=document.getElementById('adm-recent');
+  if(!mRpts.length){el.innerHTML='<div style="color:var(--muted);font-size:13px">No reports this month.</div>';return;}
+  el.innerHTML=mRpts.slice().sort(function(a,b){return b.submitted.localeCompare(a.submitted);}).slice(0,8).map(function(r){var grp=groupById(r.gid);return'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)"><div style="width:34px;height:34px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:\'Playfair Display\',serif;font-size:15px;font-weight:700;flex-shrink:0">'+r.pname[0]+'</div><div style="flex:1"><div style="font-weight:700;font-size:13px">'+r.pname+'</div><div style="font-size:12px;color:var(--muted)">'+(grp?grp.name:'')+'</div></div><div style="display:flex;gap:13px;font-size:13px;color:var(--muted)"><span><strong style="color:var(--navy)">'+r.hours+'</strong>h</span><span><strong style="color:var(--navy)">'+r.rv+'</strong> RV</span><span><strong style="color:var(--navy)">'+r.bs+'</strong> BS</span></div></div>';}).join('');
+}
+function renderAdmReports(){
+  var mk=new Date().toISOString().slice(0,7),months=[];
+  reports.forEach(function(r){if(months.indexOf(r.month)<0)months.push(r.month);});
+  months.sort().reverse();
+  var sel=document.getElementById('fil-month'),curVal=sel.value;
+  sel.innerHTML='<option value="">All Months</option>';
+  months.forEach(function(m){var o=document.createElement('option');o.value=m;o.textContent=fmtMonth(m);if(m===mk||m===curVal)o.selected=true;sel.appendChild(o);});
+  var mf=gv('fil-month'),gf=gv('fil-group');
+  var list=reports.filter(function(r){return(!mf||r.month===mf)&&(!gf||r.gid===gf);});
+  var el=document.getElementById('adm-rpt-table');
+  if(!list.length){el.innerHTML='<div class="empty"><div class="empty-icon">&#128203;</div>No reports found.</div>';return;}
+  var totH=0,totRV=0,totBS=0,totPl=0;
+  list.forEach(function(r){totH+=r.hours;totRV+=r.rv;totBS+=r.bs;totPl+=r.placements;});
+  el.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:13px">'+['Hours: '+totH.toFixed(1),'RV: '+totRV,'Bible Studies: '+totBS,'Placed: '+totPl].map(function(s){return'<div style="background:var(--cream);border-radius:8px;padding:8px;text-align:center;font-weight:700;font-size:13px;color:var(--navy)">'+s+'</div>';}).join('')+'</div>'+
+  '<div style="overflow-x:auto"><table><thead><tr><th>Publisher</th><th>Group</th><th>Month</th><th>Hrs</th><th>RV</th><th>BS</th><th>Placed</th><th>Notes</th><th></th></tr></thead><tbody>'+
+  list.map(function(r){var grp=groupById(r.gid);return'<tr><td><strong>'+r.pname+'</strong><br><span style="font-size:11px;color:var(--muted)">'+r.submitted+'</span></td><td>'+(grp?grp.name:'&mdash;')+'</td><td>'+fmtMonth(r.month)+'</td><td><strong>'+r.hours+'</strong></td><td>'+r.rv+'</td><td>'+r.bs+'</td><td>'+r.placements+'</td><td style="font-size:12px;color:var(--muted);max-width:90px">'+(r.notes||'&mdash;')+'</td><td><button class="xdel" onclick="delRpt(\''+r.id+'\')">Del</button></td></tr>';}).join('')+'</tbody></table></div>';
+}
+function delRpt(id){confirm2('Delete this report?',function(){reports=reports.filter(function(r){return r.id!==id;});saveAll();renderAdmReports();renderAdmHome();toast('Report deleted.');});}
+function exportCSV(){
+  var mf=gv('fil-month'),gf=gv('fil-group');
+  var list=reports.filter(function(r){return(!mf||r.month===mf)&&(!gf||r.gid===gf);});
+  var rows=['Publisher,Group,Month,Hours,RV,BS,Placements,Notes'];
+  list.forEach(function(r){var grp=groupById(r.gid);rows.push(['"'+r.pname+'"','"'+(grp?grp.name:'')+'"','"'+r.month+'"',r.hours,r.rv,r.bs,r.placements,'"'+(r.notes||'')+'"'].join(','));});
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));a.download='reports.csv';a.click();
+}
+function addPub(){
+  var name=gv('np-name'),pin=gv('np-pin'),grp=gv('np-group'),role=gv('np-role'),isAdm=document.getElementById('np-admin').checked;
+  if(!name||!pin){toast('Please fill in name and PIN.');return;}
+  publishers.push({id:'p'+uid(),name:name,pin:pin,group:grp,role:role,isAdmin:isAdm});
+  saveAll();renderPubs();fillAllGrps();closeM('m-addpub');toast('Publisher added!');
+  document.getElementById('np-name').value='';document.getElementById('np-pin').value='';document.getElementById('np-admin').checked=false;
+}
+function openEditPub(id){
+  var p=pubById(id);if(!p)return;
+  sv('ep-id',p.id);sv('ep-name',p.name);sv('ep-pin','');sv('ep-role',p.role);
+  document.getElementById('ep-admin').checked=!!p.isAdmin;
+  fillGrpSelect('ep-group',p.group,false);openM('m-editpub');
+}
+function saveEditPub(){
+  var id=gv('ep-id'),name=gv('ep-name'),pin=gv('ep-pin'),grp=gv('ep-group'),role=gv('ep-role'),isAdm=document.getElementById('ep-admin').checked;
+  if(!name){toast('Name cannot be empty.');return;}
+  var p=pubById(id);if(!p)return;
+  p.name=name;p.group=grp;p.role=role;p.isAdmin=isAdm;if(pin)p.pin=pin;
+  saveAll();renderPubs();closeM('m-editpub');toast('Publisher updated!');
+}
+function delPub(id){var p=pubById(id);if(!p)return;confirm2('Delete <strong>'+p.name+'</strong>?',function(){publishers=publishers.filter(function(x){return x.id!==id;});saveAll();renderPubs();toast('Publisher deleted.');});}
+function toggleAdmin(id){var p=pubById(id);if(!p)return;p.isAdmin=!p.isAdmin;saveAll();renderPubs();toast(p.isAdmin?p.name+' is now admin.':p.name+' admin removed.');}
+function renderPubs(){
+  var search=(document.getElementById('pub-search')||{value:''}).value.toLowerCase(),gfil=gv('pub-gfil');
+  var all=publishers.filter(function(p){return p.id!=='admin1';});
+  var list=all.filter(function(p){return(!search||p.name.toLowerCase().indexOf(search)>=0)&&(!gfil||p.group===gfil);});
+  var admCnt=0;all.forEach(function(p){if(p.isAdmin)admCnt++;});
+  var cEl=document.getElementById('pub-counts');if(cEl)cEl.innerHTML='<strong>'+all.length+'</strong> publishers &nbsp;&middot;&nbsp; <strong>'+admCnt+'</strong> admins';
+  var el=document.getElementById('pub-list');if(!el)return;
+  if(!list.length){el.innerHTML='<div class="empty"><div class="empty-icon">&#128101;</div>No publishers found.</div>';return;}
+  var grouped={};grouped['none']=[];groups.forEach(function(g){grouped[g.id]=[];});
+  list.forEach(function(p){if(grouped[p.group]!==undefined)grouped[p.group].push(p);else grouped['none'].push(p);});
+  var html='';
+  groups.forEach(function(g){
+    var gps=grouped[g.id]||[];if(!gps.length)return;
+    var meta=(g.overseer?'Overseer: '+g.overseer:'')+(g.overseer&&g.assistant?' &middot; ':'')+(g.assistant?'Asst: '+g.assistant:'');
+    html+='<div class="grp-hdr"><div><div style="font-family:\'Playfair Display\',serif;font-size:14px;font-weight:700">'+g.name+'</div>'+(meta?'<div style="font-size:11px;opacity:0.5;margin-top:1px">'+meta+'</div>':'')+'</div><div style="background:rgba(255,255,255,0.15);border-radius:20px;padding:3px 10px;font-size:12px">'+gps.length+'</div></div><div class="grp-body">'+gps.map(pubCard).join('')+'</div>';
+  });
+  if(grouped['none'].length){html+='<div class="grp-hdr" style="background:#7a8a9a"><div style="font-family:\'Playfair Display\',serif;font-size:14px;font-weight:700">Unassigned</div><div style="background:rgba(255,255,255,0.2);border-radius:20px;padding:3px 10px;font-size:12px">'+grouped['none'].length+'</div></div><div class="grp-body">'+grouped['none'].map(pubCard).join('')+'</div>';}
+  el.innerHTML=html;fillAllGrps();
+}
+function pubCard(p){
+  var bg=p.isAdmin?'linear-gradient(90deg,#f0eef8,#f5f0e8)':'var(--cream)',bdr=p.isAdmin?'rgba(100,60,160,0.14)':'transparent';
+  var abg=p.isAdmin?'#e8e0f0':'#f0f4f0',ac=p.isAdmin?'#4a2080':'#3a5a3a',abrd=p.isAdmin?'#c0a0e0':'#c0d8c0';
+  var al=p.isAdmin?'&#128737; Admin &#10003;':'&#128737; Set Admin';
+  return'<div class="pub-card" style="background:'+bg+';border-color:'+bdr+'"><div class="pub-av" style="background:'+avColor(p.role)+'">'+p.name[0].toUpperCase()+'</div><div class="pub-info"><div class="pub-name-row">'+p.name+(p.isAdmin?'<span style="font-size:10px;background:var(--navy);color:#fff;padding:2px 7px;border-radius:10px">ADMIN</span>':'')+'</div><div style="margin-top:3px">'+roleBadge(p.role)+'</div></div><div class="pub-acts"><button style="background:'+abg+';color:'+ac+';border-color:'+abrd+';border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:Lato,sans-serif;border-style:solid;" onclick="toggleAdmin(\''+p.id+'\')">'+al+'</button><button class="xedit" onclick="openEditPub(\''+p.id+'\')">Edit</button><button class="xdel" onclick="delPub(\''+p.id+'\')">Delete</button></div></div>';
+}
+function addGroup(){var name=gv('ng-name');if(!name){toast('Enter a group name.');return;}groups.push({id:'g'+uid(),name:name,overseer:gv('ng-overseer'),assistant:gv('ng-asst')});saveAll();renderGroups();fillAllGrps();closeM('m-addgrp');toast('Group added!');}
+function openEditGrp(id){var g=groupById(id);if(!g)return;sv('eg-id',g.id);sv('eg-name',g.name);sv('eg-overseer',g.overseer||'');sv('eg-asst',g.assistant||'');openM('m-editgrp');}
+function saveEditGrp(){var id=gv('eg-id'),g=groupById(id);if(!g)return;g.name=gv('eg-name');g.overseer=gv('eg-overseer');g.assistant=gv('eg-asst');saveAll();renderGroups();fillAllGrps();renderPubs();closeM('m-editgrp');toast('Group updated!');}
+function delGroup(id){confirm2('Delete this group?',function(){groups=groups.filter(function(g){return g.id!==id;});saveAll();renderGroups();fillAllGrps();toast('Group deleted.');});}
+function renderGroups(){
+  var el=document.getElementById('grp-list');if(!el)return;
+  if(!groups.length){el.innerHTML='<div class="empty">No groups.</div>';return;}
+  el.innerHTML='<table><thead><tr><th>Name</th><th>Overseer</th><th>Assistant</th><th>Members</th><th></th></tr></thead><tbody>'+groups.map(function(g){var cnt=publishers.filter(function(p){return p.group===g.id;}).length;return'<tr><td><strong>'+g.name+'</strong></td><td>'+(g.overseer||'&mdash;')+'</td><td>'+(g.assistant||'&mdash;')+'</td><td>'+cnt+'</td><td><div style="display:flex;gap:5px"><button class="xedit" onclick="openEditGrp(\''+g.id+'\')">Edit</button><button class="xdel" onclick="delGroup(\''+g.id+'\')">Delete</button></div></td></tr>';}).join('')+'</tbody></table>';
+}
+function saveMW(){
+  var date=gv('mw-date');if(!date){toast('Select a date.');return;}
+  var rec={id:'mw'+uid(),date:date,time:gv('mw-time'),song1:gv('mw-song1'),song2:gv('mw-song2'),song3:gv('mw-song3'),chairman:gv('mw-chairman'),prayOpen:gv('mw-pray-open'),prayClose:gv('mw-pray-close'),talk:gv('mw-talk'),talkWho:gv('mw-talk-who'),gemsWho:gv('mw-gems-who'),bibleRead:gv('mw-bible-read'),p1Type:gv('mw-p1-type'),p1Theme:gv('mw-p1-theme'),p1Student:gv('mw-p1-student'),p1Asst:gv('mw-p1-asst'),p2Type:gv('mw-p2-type'),p2Theme:gv('mw-p2-theme'),p2Student:gv('mw-p2-student'),p2Asst:gv('mw-p2-asst'),p3Type:gv('mw-p3-type'),p3Theme:gv('mw-p3-theme'),p3Student:gv('mw-p3-student'),p3Asst:gv('mw-p3-asst'),p4Type:gv('mw-p4-type'),p4Theme:gv('mw-p4-theme'),p4Student:gv('mw-p4-student'),p4Asst:gv('mw-p4-asst'),lac1Title:gv('mw-lac1-title'),lac1Who:gv('mw-lac1-who'),lac2Title:gv('mw-lac2-title'),lac2Who:gv('mw-lac2-who'),cbsCond:gv('mw-cbs-cond'),cbsRead:gv('mw-cbs-read')};
+  midweeks.push(rec);saveAll();renderAdmMW();renderPubMW();closeM('m-mw');toast('Midweek schedule saved!');
+}
+function delMW(id){midweeks=midweeks.filter(function(m){return m.id!==id;});saveAll();renderAdmMW();renderPubMW();toast('Removed.');}
+function renderAdmMW(){var el=document.getElementById('adm-mw-list');if(!el)return;var list=midweeks.slice().sort(function(a,b){return b.date.localeCompare(a.date);});el.innerHTML=list.length?list.map(function(m){return'<div style="position:relative">'+buildMWCard(m)+'<button class="xdel" style="position:absolute;top:14px;right:14px" onclick="delMW(\''+m.id+'\')">Remove</button></div>';}).join(''):'<div class="empty"><div class="empty-icon">&#128214;</div>No midweek schedules yet.</div>';}
+function saveWK(){
+  var date=gv('wk-date');if(!date){toast('Select a date.');return;}
+  var rec={id:'wk'+uid(),date:date,time:gv('wk-time'),song1:gv('wk-song1'),song2:gv('wk-song2'),chairman:gv('wk-chairman'),prayOpen:gv('wk-pray-open'),prayClose:gv('wk-pray-close'),talkTitle:gv('wk-talk-title'),speaker:gv('wk-speaker'),wtTitle:gv('wk-wt-title'),wtCond:gv('wk-wt-cond'),wtRead:gv('wk-wt-read')};
+  weekends.push(rec);saveAll();renderAdmWK();renderPubWK();closeM('m-wk');toast('Weekend schedule saved!');
+}
+function delWK(id){weekends=weekends.filter(function(w){return w.id!==id;});saveAll();renderAdmWK();renderPubWK();toast('Removed.');}
+function renderAdmWK(){var el=document.getElementById('adm-wk-list');if(!el)return;var list=weekends.slice().sort(function(a,b){return b.date.localeCompare(a.date);});el.innerHTML=list.length?list.map(function(w){return'<div style="position:relative">'+buildWKCard(w)+'<button class="xdel" style="position:absolute;top:14px;right:14px" onclick="delWK(\''+w.id+'\')">Remove</button></div>';}).join(''):'<div class="empty"><div class="empty-icon">&#127908;</div>No weekend schedules yet.</div>';}
+function saveFSM(){
+  var date=gv('fsm-date'),place=gv('fsm-place');if(!date||!place){toast('Enter date and meeting place.');return;}
+  var rec={id:'fsm'+uid(),date:date,time:gv('fsm-time'),place:place,address:gv('fsm-address'),group:gv('fsm-group')||'All',conductor:gv('fsm-conductor'),territory:gv('fsm-territory'),notes:gv('fsm-notes')};
+  fsms.push(rec);saveAll();renderAdmFSM();renderPubFSM();closeM('m-fsm');toast('Field service meeting saved!');
+}
+function delFSM(id){fsms=fsms.filter(function(f){return f.id!==id;});saveAll();renderAdmFSM();renderPubFSM();toast('Removed.');}
+function renderAdmFSM(){var el=document.getElementById('adm-fsm-list');if(!el)return;var list=fsms.slice().sort(function(a,b){return b.date.localeCompare(a.date);});el.innerHTML=list.length?list.map(function(f){return'<div style="position:relative">'+buildFSMCard(f)+'<button style="position:absolute;top:13px;right:13px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer" onclick="delFSM(\''+f.id+'\')">Remove</button></div>';}).join(''):'<div class="empty"><div class="empty-icon">&#127807;</div>No field service meetings yet.</div>';}
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+function updateBadge(){var cnt=notifs.filter(function(n){return!n.read;}).length;['pub-badge','adm-badge'].forEach(function(id){var el=document.getElementById(id);if(!el)return;if(cnt>0){el.style.display='flex';el.textContent=cnt>9?'9+':cnt;}else el.style.display='none';});}
+function openNP(){document.getElementById('np-panel').classList.add('open');document.getElementById('np-bd').classList.add('open');renderNP();}
+function closeNP(){document.getElementById('np-panel').classList.remove('open');document.getElementById('np-bd').classList.remove('open');}
+function renderNP(){
+  var el=document.getElementById('np-list');
+  if(!notifs.length){el.innerHTML='<div class="empty" style="padding:28px 16px"><div class="empty-icon">&#128276;</div>No notifications yet.</div>';return;}
+  var sorted=notifs.slice().sort(function(a,b){return b.ts-a.ts;});
+  var icons={midweek:'&#128214;',weekend:'&#127908;',fsm:'&#127807;',report:'&#128203;'};
+  el.innerHTML=sorted.map(function(n){var icon=icons[n.type]||'&#128276;',ago=timeAgo(n.ts);return'<div class="np-item'+(n.read?'':' unread')+'" onclick="markRead(\''+n.id+'\')">'+(n.read?'':'<div class="np-dot"></div>')+'<div style="display:flex;gap:9px"><div style="font-size:19px;flex-shrink:0">'+icon+'</div><div><div class="np-title">'+n.title+'</div><div class="np-body">'+n.body+'</div><div class="np-time">'+ago+'</div></div></div></div>';}).join('');
+  var pb=document.getElementById('push-btn');if(pb&&typeof Notification!=='undefined'&&Notification.permission==='granted'){pb.textContent='Push Enabled';pb.style.background='#3d7a52';}
+}
+function markRead(id){notifs.forEach(function(n){if(n.id===id)n.read=true;});dbSet('notifs',notifs);updateBadge();renderNP();}
+function markAllRead(){notifs.forEach(function(n){n.read=true;});dbSet('notifs',notifs);updateBadge();renderNP();}
+function addNotif(type,title,body){notifs.push({id:'n'+uid(),type:type,title:title,body:body,read:false,ts:Date.now()});if(notifs.length>80)notifs=notifs.slice(-80);dbSet('notifs',notifs);updateBadge();}
+function timeAgo(ts){var d=Date.now()-ts,m=Math.floor(d/60000),h=Math.floor(d/3600000),dy=Math.floor(d/86400000);if(m<2)return'Just now';if(m<60)return m+' min ago';if(h<24)return h+' hr ago';if(dy<7)return dy+(dy===1?' day':' days')+' ago';return new Date(ts).toLocaleDateString();}
+function reqPush(){if(typeof Notification==='undefined'){toast('Push not supported in this browser.');return;}Notification.requestPermission().then(function(p){if(p==='granted'){toast('Push enabled!');renderNP();new Notification('Rumuokwuta Congregation',{body:'You will receive assignment reminders.'});}else toast('Notifications blocked in browser settings.');});}
+function push2(title,body){if(typeof Notification!=='undefined'&&Notification.permission==='granted')new Notification(title,{body:body});}
+
+function splitNames(s){
+  if(!s||!String(s).trim())return[];
+  var parts=[];
+  String(s).split(',').forEach(function(x){parts.push(x.trim());});
+  if(parts.length<=1){parts=[];String(s).split('/').forEach(function(x){parts.push(x.trim());});}
+  if(parts.length<=1){parts=[];String(s).split('&').forEach(function(x){parts.push(x.trim());});}
+  return parts.filter(function(x){return x.length>0;});
+}
+
+function checkReminders(){
+  var today=new Date();today.setHours(0,0,0,0);
+  var THREE=4*24*60*60*1000;
+  var sentKey='sent_'+today.toISOString().split('T')[0];
+  var sent=dbGet(sentKey,[]);
+  function already(k){return sent.indexOf(k)>=0;}
+  function mark(k){if(!already(k)){sent.push(k);dbSet(sentKey,sent);}}
+  var nc=0;
+
+  midweeks.forEach(function(m){
+    var mDate=new Date(m.date+'T00:00:00'),diff=mDate-today;
+    if(diff<0||diff>THREE)return;
+    var dl=Math.ceil(diff/86400000),dL=dl<=0?'TODAY':dl===1?'TOMORROW':'in '+dl+' days',ds=fmtDateS(m.date);
+    var assigns={};
+    function addA(names,part){splitNames(names).forEach(function(n){if(n&&!assigns[n])assigns[n]=[];if(n)assigns[n].push(part);});}
+    addA(m.chairman,'Chairman');addA(m.prayOpen,'Opening Prayer');addA(m.prayClose,'Closing Prayer');
+    addA(m.talkWho,'Talk: '+(m.talk||'Treasures'));addA(m.gemsWho,'Spiritual Gems');addA(m.bibleRead,'Bible Reading');
+    addA(m.p1Student,(m.p1Type||'Part 1')+(m.p1Theme?' - '+m.p1Theme:''));addA(m.p1Asst,'Householder for '+(m.p1Type||'Part 1'));
+    addA(m.p2Student,(m.p2Type||'Part 2')+(m.p2Theme?' - '+m.p2Theme:''));addA(m.p2Asst,'Householder for '+(m.p2Type||'Part 2'));
+    addA(m.p3Student,(m.p3Type||'Part 3')+(m.p3Theme?' - '+m.p3Theme:''));
+    addA(m.p4Student,(m.p4Type||'Part 4')+(m.p4Theme?' - '+m.p4Theme:''));
+    addA(m.lac1Who,m.lac1Title||'Living as Christians');addA(m.lac2Who,m.lac2Title||'Living as Christians Pt 2');
+    addA(m.cbsCond,'CBS Conductor');addA(m.cbsRead,'CBS Reader');
+    Object.keys(assigns).forEach(function(name){
+      var k='mw_'+m.id+'_'+name;if(already(k))return;
+      var t='Midweek Meeting - '+dL,b=name+', you have: '+assigns[name].join(', ')+' on '+ds+' at '+fmtTime(m.time);
+      addNotif('midweek',t,b);push2(t,b);mark(k);nc++;
+    });
+  });
+
+  weekends.forEach(function(w){
+    var wDate=new Date(w.date+'T00:00:00'),diff=wDate-today;
+    if(diff<0||diff>THREE)return;
+    var dl=Math.ceil(diff/86400000),dL=dl<=0?'TODAY':dl===1?'TOMORROW':'in '+dl+' days',ds=fmtDateS(w.date);
+    var assigns={};
+    function addA(names,part){splitNames(names).forEach(function(n){if(n&&!assigns[n])assigns[n]=[];if(n)assigns[n].push(part);});}
+    addA(w.chairman,'Chairman');addA(w.prayOpen,'Opening Prayer');addA(w.prayClose,'Closing Prayer');
+    addA(w.speaker,'Public Talk Speaker');addA(w.wtCond,'WT Conductor');addA(w.wtRead,'WT Reader');
+    Object.keys(assigns).forEach(function(name){
+      var k='wk_'+w.id+'_'+name;if(already(k))return;
+      var t='Weekend Meeting - '+dL,b=name+', you have: '+assigns[name].join(', ')+' on '+ds+' at '+fmtTime(w.time);
+      addNotif('weekend',t,b);push2(t,b);mark(k);nc++;
+    });
+  });
+
+  fsms.forEach(function(f){
+    var fDate=new Date(f.date+'T00:00:00'),diff=fDate-today;
+    if(diff<0||diff>THREE)return;
+    var dl=Math.ceil(diff/86400000),dL=dl<=0?'TODAY':dl===1?'TOMORROW':'in '+dl+' days',ds=fmtDateS(f.date);
+    splitNames(f.conductor).forEach(function(name){
+      var k='fsm_c_'+f.id+'_'+name;if(already(k))return;
+      var t='Field Service - '+dL,b=name+', you are conducting at '+f.place+' on '+ds+' at '+fmtTime(f.time)+(f.territory?'. Territory: '+f.territory:'');
+      addNotif('fsm',t,b);push2(t,b);mark(k);nc++;
+    });
+    publishers.forEach(function(p){
+      if(p.id==='admin1')return;if(f.group!=='All'&&p.group!==f.group)return;
+      var k='fsm_m_'+f.id+'_'+p.id;if(already(k))return;
+      var t='Field Service Meeting - '+dL,b=p.name+', field service is at '+f.place+' on '+ds+' at '+fmtTime(f.time)+'. Please be on time!';
+      addNotif('fsm',t,b);push2(t,b);mark(k);nc++;
+    });
+  });
+
+  if(nc>0)toast(nc+' new reminder'+(nc>1?'s':'')+'! Check notifications.');
+}
+function sendRemindersNow(){dbSet('sent_'+new Date().toISOString().split('T')[0],[]);checkReminders();toast('Reminders sent!');}
+
+// ============================================================
+// DATA BACKUP & RESTORE
+// ============================================================
+function exportData(){
+  var data={
+    _version:4,
+    _exported:new Date().toISOString(),
+    _congregation:'Rumuokwuta',
+    groups:groups,
+    publishers:publishers,
+    reports:reports,
+    midweeks:midweeks,
+    weekends:weekends,
+    fsms:fsms,
+    notifs:notifs
+  };
+  var json=JSON.stringify(data,null,2);
+  var blob=new Blob([json],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  var d=new Date().toISOString().split('T')[0];
+  a.href=url;
+  a.download='rumuokwuta-backup-'+d+'.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('Backup downloaded!');
+}
+function importData(){
+  var file=document.getElementById('restore-file').files[0];
+  if(!file){toast('Please select a backup file first.');return;}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      if(!data.groups||!data.publishers){toast('Invalid backup file.');return;}
+      confirm2('This will replace ALL current data with the backup. Are you sure?',function(){
+        if(data.groups)    {groups=data.groups;    dbSet('groups',groups);}
+        if(data.publishers){publishers=data.publishers; dbSet('publishers',publishers);}
+        if(data.reports)   {reports=data.reports;   dbSet('reports',reports);}
+        if(data.midweeks)  {midweeks=data.midweeks; dbSet('midweeks',midweeks);}
+        if(data.weekends)  {weekends=data.weekends; dbSet('weekends',weekends);}
+        if(data.fsms)      {fsms=data.fsms;         dbSet('fsms',fsms);}
+        if(data.notifs)    {notifs=data.notifs;     dbSet('notifs',notifs);}
+        renderAdmHome();renderAdmReports();renderPubs();renderAdmMW();renderAdmWK();renderAdmFSM();renderGroups();renderStorageInfo();
+        toast('Data restored successfully!');
+      });
+    }catch(err){toast('Could not read file. Make sure it is a valid backup.');}
+  };
+  reader.readAsText(file);
+}
+function connectGAS(){
+  var url=(document.getElementById('gas-url-input').value||'').trim();
+  var res=document.getElementById('gas-result');
+  if(!url){res.textContent='⚠️ Paste your Web App URL first.';res.style.color='#e53935';return;}
+  if(!url.includes('script.google.com')){res.textContent='⚠️ URL must be from script.google.com';res.style.color='#e53935';return;}
+  GAS_URL=url; SYNC_READY=true; localStorage.setItem('cma_gas_url',url);
+  res.textContent='⏳ Testing connection…';res.style.color='#c8a94a';
+  gasRead(function(err,data){
+    if(err){
+      GAS_URL=''; SYNC_READY=false;
+      res.textContent='❌ Could not connect. Make sure "Who has access" is set to Anyone when deploying.';
+      res.style.color='#e53935'; return;
+    }
+    var hasRemote=data&&data.publishers&&data.publishers.length>0;
+    if(hasRemote){
+      ['groups','publishers','reports','midweeks','weekends','fsms'].forEach(function(k){
+        if(data[k]&&Array.isArray(data[k])&&data[k].length>0){window[k]=data[k];lcSet(k,data[k]);}
+      });
+      if(data.zoomInfo){zoomInfo=data.zoomInfo;lcSet('zoomInfo',zoomInfo);}
+      res.textContent='✅ Connected! Remote data loaded.';
+    } else {
+      pushToCloud();
+      res.textContent='✅ Connected! Local data pushed to cloud.';
+    }
+    res.style.color='#4caf50';
+    setSyncStatus('ok'); updateGASStatusLine();
+    toast('✅ Sync active! Share this URL with all other devices.');
+    startAutoSync();
+  });
+}
+
+function testGAS(){
+  var url=(document.getElementById('gas-url-input').value||'').trim();
+  var res=document.getElementById('gas-result');
+  if(!url){res.textContent='⚠️ Paste your URL first.';res.style.color='#e53935';return;}
+  res.textContent='⏳ Testing…';res.style.color='#aaa';
+  var xhr=new XMLHttpRequest();
+  xhr.open('GET',url,true); xhr.timeout=15000;
+  xhr.onload=function(){
+    try{JSON.parse(xhr.responseText);res.textContent='✅ Connected! Tap Save & Connect.';res.style.color='#4caf50';}
+    catch(e){res.textContent='⚠️ Reached script but got unexpected data. Did you paste the new code and redeploy?';res.style.color='#e53935';}
+  };
+  xhr.onerror=function(){res.textContent='❌ Network error. Check internet and deploy settings (Who has access = Anyone).';res.style.color='#e53935';};
+  xhr.ontimeout=function(){res.textContent='❌ Timed out. Try redeploying as a NEW deployment.';res.style.color='#e53935';};
+  xhr.send();
+}
+
+function updateGASStatusLine(){
+  var el=document.getElementById('gas-status-line'); if(!el)return;
+  var inp=document.getElementById('gas-url-input');if(inp&&GAS_URL)inp.value=GAS_URL;
+  if(GAS_URL){
+    el.innerHTML='<span style="color:#4caf50;font-weight:700">✅ Cloud sync active</span><br>Share this same URL with all other devices and publishers. They paste it and tap Connect.';
+  }else{
+    el.innerHTML='<span style="color:#e53935">Not connected.</span> Follow the steps above.';
+  }
+}
+
+
+function copyGasCode(){
+  var txt=document.getElementById('gas-code-pre');
+  if(!txt)return;
+  navigator.clipboard.writeText(txt.textContent).then(function(){toast('SQL copied!');}).catch(function(){
+    var ta=document.createElement('textarea');ta.value=txt.textContent;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('SQL copied!');
+  });
+}
+
+
+function saveZoomInfo(){
+  zoomInfo={
+    midweekId:  document.getElementById('zm-mid-id').value.trim(),
+    midweekPass:document.getElementById('zm-mid-pass').value.trim(),
+    midweekLink:document.getElementById('zm-mid-link').value.trim(),
+    weekendId:  document.getElementById('zm-wk-id').value.trim(),
+    weekendPass:document.getElementById('zm-wk-pass').value.trim(),
+    weekendLink:document.getElementById('zm-wk-link').value.trim()
+  };
+  saveAll();
+  var msg=document.getElementById('zoom-saved-msg');
+  msg.textContent='✅ Saved!';setTimeout(function(){msg.textContent='';},2500);
+  toast('Zoom details saved and syncing…');
+  renderZoomSettings();
+}
+
+function renderZoomSettings(){
+  var z=zoomInfo||{};
+  var f=function(id,val){var el=document.getElementById(id);if(el)el.value=val||'';};
+  f('zm-mid-id',z.midweekId); f('zm-mid-pass',z.midweekPass); f('zm-mid-link',z.midweekLink);
+  f('zm-wk-id',z.weekendId);  f('zm-wk-pass',z.weekendPass);  f('zm-wk-link',z.weekendLink);
+}
+
+// Publisher GAS sync setup
+function connectPubGAS(){
+  var url=(document.getElementById('pub-gas-url-input').value||'').trim();
+  var res=document.getElementById('pub-gas-result');
+  if(!url){res.textContent='⚠️ Paste the URL from admin first.';res.style.color='#e53935';return;}
+  GAS_URL=url; SYNC_READY=true; localStorage.setItem('cma_gas_url',url);
+  res.textContent='⏳ Connecting…';res.style.color='#c8a94a';
+  pullFromCloud(function(ok){
+    if(ok){
+      res.textContent='✅ Connected! Data loaded.';res.style.color='#4caf50';
+      setSyncStatus('ok'); startAutoSync();
+      renderPubHome();renderPubMW();renderPubWK();renderPubFSM();
+      toast('✅ Sync active!');
+    } else {
+      GAS_URL=''; SYNC_READY=false; localStorage.removeItem('cma_gas_url');
+      res.textContent='❌ Could not connect. Check the URL and internet.';res.style.color='#e53935';
+    }
+  });
+}
+
+function renderStorageInfo(){
+  var el=document.getElementById('storage-info');if(!el)return;
+  var keys=['groups','publishers','reports','midweeks','weekends','fsms','notifs'];
+  var rows=keys.map(function(k){
+    var raw=localStorage.getItem('cma_'+k)||'[]';
+    var count=0;try{var arr=JSON.parse(raw);count=Array.isArray(arr)?arr.length:1;}catch(e){}
+    var bytes=new Blob([raw]).size;
+    return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="text-transform:capitalize;font-weight:700">'+k+'</span><span>'+count+' records &nbsp;&middot;&nbsp; '+bytes+' bytes</span></div>';
+  });
+  var total=keys.reduce(function(s,k){return s+new Blob([localStorage.getItem('cma_'+k)||'']).size;},0);
+  el.innerHTML=rows.join('')+'<div style="margin-top:9px;font-weight:700;color:var(--navy)">Total stored: ~'+Math.round(total/1024*10)/10+' KB</div>';
+  updateGASStatusLine();
+}
+
+// ============================================================
+// PWA
+// ============================================================
+var _deferredPWA=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();_deferredPWA=e;document.getElementById('install-banner').style.display='flex';});
+window.addEventListener('appinstalled',function(){document.getElementById('install-banner').style.display='none';_deferredPWA=null;});
+function installPWA(){if(_deferredPWA){_deferredPWA.prompt();_deferredPWA.userChoice.then(function(){_deferredPWA=null;document.getElementById('install-banner').style.display='none';});}}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});}
+
+// ============================================================
+// INIT - set date fields only, never overwrite saved data
+// ============================================================
+(function(){
+  var t=new Date().toISOString().split('T')[0];
+  sv('mw-date',t);sv('wk-date',t);sv('fsm-date',t);
+  sv('rpt-month',new Date().toISOString().slice(0,7));
+})();
+</script>
+</body>
+</html>
