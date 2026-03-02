@@ -565,8 +565,8 @@ function getSheet() {
 // Admin sets the GAS Web App URL once in Admin → Data tab.
 // All devices (including publishers) use the same URL to sync.
 
-var GAS_URL   = localStorage.getItem('cma_gas_url') || '';
-var SYNC_READY = !!GAS_URL;
+var GAS_URL   = localStorage.getItem('cma_gas_url') || 'https://script.google.com/macros/s/AKfycbxRfKoRgPtRW5bs63yJBLw7DFv0Yn4jQ9mUYA5UZMkoteFT1SahpKhbvbN93ZCTOEe9/exec';
+var SYNC_READY = true; // hardcoded URL active
 var _pushDebounce = null;
 var _syncTimer    = null;
 
