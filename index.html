@@ -2,16 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Ministry App">
 <meta name="theme-color" content="#1b2d4f">
+<title>Rumuokwuta Ministry Assistant</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<title>Rumuokwuta Ministry Assistant</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#1b2d4f;--navy2:#243860;--gold:#c8a94a;--gold2:#e8c96a;--cream:#f5f0e8;--soft:#e4ddd0;--green:#3d7a52;--red:#883333;--muted:#7a7060;--border:rgba(200,190,170,0.5);}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -153,17 +151,12 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
     <div class="login-box">
       <div class="login-title" id="login-title">Publisher Login</div>
       <div class="login-sub" id="login-sub">Enter your name and PIN</div>
-
-      <!-- Tab switcher (publisher only) -->
       <div id="reg-tabs" style="display:flex;border-radius:8px;overflow:hidden;border:1px solid rgba(200,169,74,0.3);margin-bottom:18px;">
         <button id="tab-login" onclick="switchTab('login')" style="flex:1;padding:9px;background:var(--gold);color:var(--navy);border:none;font-family:Lato,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Sign In</button>
         <button id="tab-reg" onclick="switchTab('reg')" style="flex:1;padding:9px;background:transparent;color:rgba(255,255,255,0.5);border:none;font-family:Lato,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Register</button>
       </div>
-
       <div class="err-box" id="login-err"></div>
       <div class="err-box" id="reg-err"></div>
-
-      <!-- SIGN IN form -->
       <div id="form-login">
         <label class="lf-lbl">Full Name</label>
         <input class="lf-inp" type="text" id="inp-name" placeholder="Your full name" autocomplete="off" autocorrect="off" autocapitalize="words">
@@ -171,8 +164,6 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
         <input class="lf-inp" type="password" id="inp-pin" placeholder="4-6 digit PIN" maxlength="6" inputmode="numeric">
         <button class="btn-login" onclick="doLogin()">Sign In</button>
       </div>
-
-      <!-- REGISTER form -->
       <div id="form-reg" style="display:none;">
         <label class="lf-lbl">Full Name</label>
         <input class="lf-inp" type="text" id="reg-name" placeholder="Your full name" autocorrect="off" autocapitalize="words">
@@ -183,9 +174,8 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
         <label class="lf-lbl">Group</label>
         <select class="lf-inp" id="reg-group" style="color:#fff;background:rgba(255,255,255,0.07);border-color:rgba(200,169,74,0.25);"></select>
         <button class="btn-login" onclick="doRegister()">Create Account</button>
-        <div style="font-size:11px;color:rgba(255,255,255,0.3);text-align:center;margin-top:10px;line-height:1.5;">Your account will be visible to the admin after registration.</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);text-align:center;margin-top:10px;line-height:1.5;">Your account will be visible to admin after registration.</div>
       </div>
-
       <span class="back-link" onclick="showHome()">&#8592; Back</span>
     </div>
   </div>
@@ -211,11 +201,11 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
     <button class="nav-btn" onclick="pubNav(this,'pt-sync')">&#9729; Sync</button>
   </nav>
   <div class="page">
+    <!-- HOME -->
     <div id="pt-home">
-      <!-- Meeting info banner -->
       <div id="pub-meeting-banner" style="background:linear-gradient(135deg,var(--navy),#0f1d36);color:#fff;border-radius:14px;padding:18px 18px 14px;margin-bottom:14px">
         <div style="font-size:10px;font-weight:700;letter-spacing:2px;opacity:0.5;text-transform:uppercase;margin-bottom:4px">Next Meeting</div>
-        <div id="pub-next-meeting-title" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;line-height:1.2;margin-bottom:2px">Loading…</div>
+        <div id="pub-next-meeting-title" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;line-height:1.2;margin-bottom:2px">Loading&#8230;</div>
         <div id="pub-next-meeting-date" style="font-size:13px;opacity:0.65;margin-bottom:12px"></div>
         <div id="pub-next-meeting-part" style="font-size:13px;background:rgba(200,169,74,0.15);border:1px solid rgba(200,169,74,0.3);border-radius:8px;padding:8px 12px;margin-bottom:12px;display:none"></div>
         <div id="pub-zoom-box" style="display:none">
@@ -227,7 +217,6 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
           </div>
         </div>
       </div>
-
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
         <div class="section-title" id="pub-welcome" style="font-size:16px"></div>
         <div style="font-size:12px;color:var(--muted)" id="pub-mlbl"></div>
@@ -235,6 +224,28 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
       <div class="card"><div class="card-title">My Report This Month</div><div id="pub-my-rpt"></div></div>
       <div class="card"><div class="card-title">Upcoming Meetings</div><div id="pub-upcoming"></div></div>
     </div>
+    <!-- REPORT -->
+    <div id="pt-report" style="display:none">
+      <div class="card" style="background:linear-gradient(135deg,var(--navy),#0f1d36);color:#fff;margin-bottom:18px;">
+        <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:700;margin-bottom:4px">Field Service Report</div>
+        <div style="font-size:13px;opacity:0.5" id="pub-rpt-sub"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Submit Monthly Report</div>
+        <div class="row2"><div class="fi"><label>Month</label><input type="month" id="rpt-month"></div><div class="fi"><label>Group</label><select id="rpt-group"><option value="">Select group</option></select></div></div>
+        <div class="row3"><div class="fi"><label>Hours</label><input type="number" id="rpt-hours" min="0" step="0.5" placeholder="0"></div><div class="fi"><label>Return Visits</label><input type="number" id="rpt-rv" min="0" placeholder="0"></div><div class="fi"><label>Bible Studies</label><input type="number" id="rpt-bs" min="0" placeholder="0"></div></div>
+        <div class="fi"><label>Placements</label><input type="number" id="rpt-placements" min="0" placeholder="0"></div>
+        <div class="fi"><label>Notes to Overseer</label><textarea id="rpt-notes" rows="3" placeholder="Optional..."></textarea></div>
+        <button class="btn btn-gold" onclick="submitReport()">Submit Report</button>
+      </div>
+    </div>
+    <!-- MIDWEEK -->
+    <div id="pt-midweek" style="display:none"><div class="page-head"><div class="section-title">Midweek Schedule</div></div><div id="pub-mw-list"></div></div>
+    <!-- WEEKEND -->
+    <div id="pt-weekend" style="display:none"><div class="page-head"><div class="section-title">Weekend Schedule</div></div><div id="pub-wk-list"></div></div>
+    <!-- FSM -->
+    <div id="pt-fsm" style="display:none"><div class="page-head"><div class="section-title">Field Service Meetings</div></div><div id="pub-fsm-list"></div></div>
+    <!-- SYNC -->
     <div id="pt-sync" style="display:none">
       <div class="page-head"><div class="section-title">&#9729; Cloud Sync</div></div>
       <div class="card" style="border-left:4px solid var(--gold)">
@@ -243,19 +254,117 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
           <div class="sync-dot" style="font-size:14px;font-weight:700"></div>
           <button class="btn btn-outline btn-sm" onclick="pullFromCloud(function(ok){if(ok){renderPubHome();renderPubMW();renderPubWK();renderPubFSM();toast('Refreshed!');}else toast('Could not reach cloud.')})">Refresh Now</button>
         </div>
-        <div style="font-size:12px;color:var(--muted)">When connected, schedules and Zoom details sync automatically from admin.</div>
+      </div>
+      <div class="card" style="border-left:4px solid #f39c12">
+        <div class="card-title">&#128279; Connect to Cloud</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Ask your admin for the <strong>Database URL</strong> and paste it below.</p>
+        <div class="fi"><label>&#127758; Database URL (from admin)</label>
+          <input type="url" id="pub-fb-url-input" placeholder="https://yourproject-default-rtdb.firebaseio.com" style="font-size:12px;">
+        </div>
+        <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-gold" onclick="connectPubFirebase()">&#128279; Connect</button>
+          <span id="pub-fb-result" style="font-size:12px;font-weight:700;"></span>
+        </div>
+        <div id="pub-gas-status" style="margin-top:10px;font-size:12px;color:#888;padding:9px;background:var(--cream);border-radius:8px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN SCREEN -->
+<div class="screen" id="screen-admin">
+  <div class="app-header">
+    <div class="app-logo"><div class="logo-dot">&#128737;</div>Admin Panel</div>
+    <div class="hdr-right">
+      <div class="user-pill" id="adm-pill"></div>
+      <div class="sync-dot" style="font-size:11px;white-space:nowrap;color:#aaa"></div>
+      <div class="bell" onclick="openNP()">&#128276;<div class="bell-badge" id="adm-badge"></div></div>
+      <button class="btn-out" onclick="doSignOut()">Sign Out</button>
+    </div>
+  </div>
+  <nav class="app-nav">
+    <button class="nav-btn active" onclick="admNav(this,'at-home')">Dashboard</button>
+    <button class="nav-btn" onclick="admNav(this,'at-reports')">Reports</button>
+    <button class="nav-btn" onclick="admNav(this,'at-publishers')">Publishers</button>
+    <button class="nav-btn" onclick="admNav(this,'at-midweek')">Midweek</button>
+    <button class="nav-btn" onclick="admNav(this,'at-weekend')">Weekend</button>
+    <button class="nav-btn" onclick="admNav(this,'at-fsm')">Field Service</button>
+    <button class="nav-btn" onclick="admNav(this,'at-groups')">Groups</button>
+    <button class="nav-btn" onclick="admNav(this,'at-data')">&#128190; Data</button>
+  </nav>
+  <div class="page">
+    <!-- DASHBOARD -->
+    <div id="at-home">
+      <div class="page-head"><div class="section-title">Dashboard</div><div style="display:flex;gap:9px;align-items:center"><span style="font-size:13px;color:var(--muted)" id="adm-mlbl"></span><button class="btn btn-gold btn-sm" onclick="sendRemindersNow()">Send Reminders</button></div></div>
+      <div id="adm-meeting-banner" style="background:linear-gradient(135deg,var(--navy),#0f1d36);color:#fff;border-radius:14px;padding:18px 18px 14px;margin-bottom:14px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;opacity:0.5;text-transform:uppercase;margin-bottom:4px">Next Meeting</div>
+        <div id="adm-next-title" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;line-height:1.2;margin-bottom:2px">&#8212;</div>
+        <div id="adm-next-date" style="font-size:13px;opacity:0.65;margin-bottom:10px"></div>
+        <div id="adm-next-part" style="font-size:13px;background:rgba(200,169,74,0.15);border:1px solid rgba(200,169,74,0.3);border-radius:8px;padding:8px 12px;margin-bottom:10px;display:none"></div>
+        <div id="adm-zoom-box" style="display:none">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;opacity:0.5;text-transform:uppercase;margin-bottom:6px">&#128247; Zoom</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+            <span id="adm-zoom-id" style="font-size:13px;background:rgba(255,255,255,0.1);border-radius:6px;padding:4px 10px;font-family:monospace"></span>
+            <span id="adm-zoom-pass" style="font-size:13px;background:rgba(255,255,255,0.1);border-radius:6px;padding:4px 10px"></span>
+            <a id="adm-zoom-link" href="#" target="_blank" style="background:var(--gold);color:var(--navy);border-radius:7px;padding:6px 14px;font-size:12px;font-weight:700;text-decoration:none;display:none">Join &#8594;</a>
+          </div>
+        </div>
+      </div>
+      <div class="stats"><div class="stat"><div class="stat-n" id="st-pub">0</div><div class="stat-l">Publishers</div></div><div class="stat"><div class="stat-n" id="st-rpt">0</div><div class="stat-l">Reports In</div></div><div class="stat"><div class="stat-n" id="st-hrs">0</div><div class="stat-l">Total Hours</div></div><div class="stat"><div class="stat-n" id="st-bs">0</div><div class="stat-l">Bible Studies</div></div></div>
+      <div class="card"><div class="card-title">Recent Reports</div><div id="adm-recent"></div></div>
+    </div>
+    <!-- REPORTS -->
+    <div id="at-reports" style="display:none">
+      <div class="page-head"><div class="section-title">Reports</div><button class="btn btn-outline btn-sm" onclick="exportCSV()">Export CSV</button></div>
+      <div class="card"><div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px"><select id="fil-month" onchange="renderAdmReports()" style="max-width:175px"></select><select id="fil-group" onchange="renderAdmReports()" style="max-width:155px"><option value="">All Groups</option></select></div><div id="adm-rpt-table"></div></div>
+    </div>
+    <!-- PUBLISHERS -->
+    <div id="at-publishers" style="display:none">
+      <div class="page-head"><div class="section-title">Publishers</div><button class="btn btn-primary" onclick="openM('m-addpub')">+ Add Publisher</button></div>
+      <div class="card"><div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px;align-items:center"><input type="text" id="pub-search" placeholder="Search..." style="max-width:190px" oninput="renderPubs()"><select id="pub-gfil" onchange="renderPubs()" style="max-width:155px"><option value="">All Groups</option></select><div style="margin-left:auto;font-size:12px;color:var(--muted)" id="pub-counts"></div></div><div id="pub-list"></div></div>
+    </div>
+    <!-- MIDWEEK -->
+    <div id="at-midweek" style="display:none">
+      <div class="page-head"><div class="section-title">Midweek Schedule</div><button class="btn btn-primary btn-sm" onclick="openM('m-addmw')">+ Add Week</button></div>
+      <div id="adm-mw-list"></div>
+    </div>
+    <!-- WEEKEND -->
+    <div id="at-weekend" style="display:none">
+      <div class="page-head"><div class="section-title">Weekend Schedule</div><button class="btn btn-primary btn-sm" onclick="openM('m-addwk')">+ Add Weekend</button></div>
+      <div id="adm-wk-list"></div>
+    </div>
+    <!-- FSM -->
+    <div id="at-fsm" style="display:none">
+      <div class="page-head"><div class="section-title">Field Service Meetings</div><button class="btn btn-primary btn-sm" onclick="openM('m-addfsm')">+ Add Meeting</button></div>
+      <div id="adm-fsm-list"></div>
+    </div>
+    <!-- GROUPS -->
+    <div id="at-groups" style="display:none">
+      <div class="page-head"><div class="section-title">Groups</div></div>
+      <div id="grp-list"></div>
+    </div>
+    <!-- DATA -->
+    <div id="at-data" style="display:none">
+      <div class="page-head"><div class="section-title">Data &amp; Sync</div></div>
+      <div class="card" style="border-left:4px solid var(--gold)">
+        <div class="card-title">&#9729;&#65039; Sync Status</div>
+        <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:10px">
+          <div class="sync-dot" style="font-size:14px;font-weight:700"></div>
+          <button class="btn btn-gold btn-sm" onclick="pushToCloud();toast('Pushing&#8230;')">Push Now</button>
+          <button class="btn btn-outline btn-sm" onclick="pullFromCloud(function(ok){if(ok){renderAdmHome();renderAdmReports();renderPubs();renderAdmMW();renderAdmWK();renderAdmFSM();renderGroups();renderZoomSettings();toast('Refreshed!');}else toast('Could not reach cloud.')})">Pull Now</button>
+        </div>
+        <div style="font-size:12px;color:var(--muted)">Auto-syncs every 20 seconds across all devices.</div>
       </div>
       <div class="card" style="border-left:4px solid #f39c12">
         <div class="card-title">&#128279; Cloud Setup &mdash; Firebase (Free, 3 min)</div>
         <div style="font-size:13px;color:var(--muted);line-height:2;margin-bottom:14px">
-          <strong style="color:var(--navy)">1.</strong> Go to <strong>console.firebase.google.com</strong> &rarr; sign in &rarr; <strong>Create a project</strong> (any name)<br>
-          <strong style="color:var(--navy)">2.</strong> In the left menu tap <strong>Build &rarr; Realtime Database</strong><br>
-          <strong style="color:var(--navy)">3.</strong> Click <strong>Create Database</strong> &rarr; choose any location &rarr; click <strong>Next</strong> &rarr; <strong>Enable</strong><br>
-          <strong style="color:var(--navy)">4.</strong> Click the <strong>Rules</strong> tab &rarr; replace ALL the text with this:<br>
+          <strong style="color:var(--navy)">1.</strong> Go to <strong>console.firebase.google.com</strong> &rarr; sign in &rarr; <strong>Create a project</strong><br>
+          <strong style="color:var(--navy)">2.</strong> Left menu: <strong>Build &rarr; Realtime Database &rarr; Create Database</strong> &rarr; Next &rarr; Enable<br>
+          <strong style="color:var(--navy)">3.</strong> Click <strong>Rules</strong> tab &rarr; replace all text with:<br>
           <div style="background:#1e1e2e;border-radius:8px;padding:10px;margin:6px 0;font-family:monospace;font-size:12px;color:#a8d8a8">{"rules":{".read":true,".write":true}}</div>
           Click <strong>Publish</strong><br>
-          <strong style="color:var(--navy)">5.</strong> Go back to <strong>Data</strong> tab &rarr; copy the URL at the top (looks like <code style="background:#f0f0f0;padding:1px 5px;border-radius:4px">https://yourproject-default-rtdb.firebaseio.com</code>)<br>
-          <strong style="color:var(--navy)">6.</strong> Paste below &rarr; tap <strong>Save &amp; Connect</strong>
+          <strong style="color:var(--navy)">4.</strong> Go back to <strong>Data</strong> tab &rarr; copy the URL (e.g. <code style="background:#f0f0f0;padding:1px 5px;border-radius:4px">https://project-rtdb.firebaseio.com</code>)<br>
+          <strong style="color:var(--navy)">5.</strong> Paste below &rarr; tap <strong>Save &amp; Connect</strong>. Share same URL with publishers.
         </div>
         <div class="fi"><label>&#127758; Database URL</label>
           <input type="url" id="fb-url-input" placeholder="https://yourproject-default-rtdb.firebaseio.com" style="font-size:12px;">
@@ -266,27 +375,25 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
         </div>
         <div id="fb-status-line" style="margin-top:11px;font-size:12px;color:#888;line-height:1.8;padding:10px;background:var(--cream);border-radius:8px;"></div>
       </div>
-
-      <!-- Zoom Meeting Details -->
+      <!-- Zoom -->
       <div class="card" style="border-left:4px solid #2d8cff">
         <div class="card-title">&#128247; Zoom Meeting Details</div>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Set your congregation Zoom details. These show on the main screen for all publishers.</p>
-        <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">&#128218; Midweek Meeting (Life &amp; Ministry)</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px">These show on the dashboard for all publishers.</p>
+        <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">&#128218; Midweek Meeting</div>
         <div class="row3">
-          <div class="fi"><label>Meeting ID</label><input type="text" id="zm-mid-id" placeholder="123 456 7890" inputmode="numeric"></div>
+          <div class="fi"><label>Meeting ID</label><input type="text" id="zm-mid-id" placeholder="123 456 7890"></div>
           <div class="fi"><label>Passcode</label><input type="text" id="zm-mid-pass" placeholder="abc123"></div>
           <div class="fi"><label>Join Link</label><input type="url" id="zm-mid-link" placeholder="https://zoom.us/j/..."></div>
         </div>
-        <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin:14px 0 10px">&#127908; Weekend Meeting (Public Talk &amp; Watchtower)</div>
+        <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin:14px 0 10px">&#127908; Weekend Meeting</div>
         <div class="row3">
-          <div class="fi"><label>Meeting ID</label><input type="text" id="zm-wk-id" placeholder="123 456 7890" inputmode="numeric"></div>
+          <div class="fi"><label>Meeting ID</label><input type="text" id="zm-wk-id" placeholder="123 456 7890"></div>
           <div class="fi"><label>Passcode</label><input type="text" id="zm-wk-pass" placeholder="abc123"></div>
           <div class="fi"><label>Join Link</label><input type="url" id="zm-wk-link" placeholder="https://zoom.us/j/..."></div>
         </div>
         <button class="btn btn-gold" onclick="saveZoomInfo()">&#128190; Save Zoom Details</button>
         <span id="zoom-saved-msg" style="font-size:12px;color:#4caf50;margin-left:10px;font-weight:700"></span>
       </div>
-
       <!-- Backup -->
       <div class="card" style="border-left:4px solid var(--green)">
         <div class="card-title">&#128190; Backup &amp; Restore</div>
@@ -297,7 +404,6 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
         </div>
         <button class="btn btn-primary" onclick="importData()">&#128229; Restore</button>
       </div>
-
       <div class="card" style="border-left:4px solid #888">
         <div class="card-title">&#127979; Storage Info</div>
         <div id="storage-info" style="font-size:13px;color:var(--muted);line-height:2"></div>
@@ -311,126 +417,94 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
   <div class="modal-box">
     <div class="modal-title">Add Publisher</div>
     <div class="row2"><div class="fi"><label>Full Name</label><input type="text" id="np-name"></div><div class="fi"><label>PIN (4-6 digits)</label><input type="password" id="np-pin" maxlength="6" inputmode="numeric"></div></div>
-    <div class="row2"><div class="fi"><label>Group</label><select id="np-group"><option value="">No group</option></select></div><div class="fi"><label>Role</label><select id="np-role"><option value="publisher">Publisher</option><option value="elder">Elder</option><option value="ms">Ministerial Servant</option><option value="pioneer">Pioneer</option></select></div></div>
-    <div class="fi" style="background:#f0eef8;border-radius:8px;padding:10px 13px;display:flex;align-items:center;gap:9px"><input type="checkbox" id="np-admin" style="width:16px;height:16px;accent-color:var(--navy);cursor:pointer"><label for="np-admin" style="font-size:13px;font-weight:700;color:var(--navy);cursor:pointer;text-transform:none;letter-spacing:0;margin:0">Grant Admin / ACS Access</label></div>
-    <div class="modal-actions"><button class="btn btn-outline" onclick="closeM('m-addpub')">Cancel</button><button class="btn btn-primary" onclick="addPub()">Add Publisher</button></div>
+    <div class="row2"><div class="fi"><label>Group</label><select id="np-group"></select></div><div class="fi"><label>Role</label><select id="np-role"><option value="publisher">Publisher</option><option value="ms">Min. Servant</option><option value="elder">Elder</option></select></div></div>
+    <div class="fi" style="display:flex;align-items:center;gap:9px"><input type="checkbox" id="np-admin"><label for="np-admin">Admin access</label></div>
+    <div style="display:flex;gap:9px;margin-top:14px"><button class="btn btn-gold" onclick="addPub()">Add</button><button class="btn btn-outline" onclick="closeM('m-addpub')">Cancel</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="m-addmw">
+  <div class="modal-box" style="max-width:520px">
+    <div class="modal-title">Add Midweek Schedule</div>
+    <div class="row2"><div class="fi"><label>Date</label><input type="date" id="mw-date"></div><div class="fi"><label>Time</label><input type="time" id="mw-time" value="19:00"></div></div>
+    <div class="row2"><div class="fi"><label>Chairman</label><input type="text" id="mw-chair" list="pub-list-dl"></div><div class="fi"><label>Opening Prayer</label><input type="text" id="mw-pray-open" list="pub-list-dl"></div></div>
+    <div class="row2"><div class="fi"><label>Opening Song #</label><input type="text" id="mw-song1"></div><div class="fi"><label>Middle Song #</label><input type="text" id="mw-song2"></div></div>
+    <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;margin:12px 0 8px">Treasures</div>
+    <div class="row3"><div class="fi"><label>Talk (10 min)</label><input type="text" id="mw-talk"></div><div class="fi"><label>Speaker</label><input type="text" id="mw-talk-who" list="pub-list-dl"></div><div class="fi"><label>Gems (10 min)</label><input type="text" id="mw-gems-who" list="pub-list-dl"></div></div>
+    <div class="fi"><label>Bible Reading</label><input type="text" id="mw-bible-read" list="pub-list-dl"></div>
+    <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;margin:12px 0 8px">Apply Yourself</div>
+    <div class="row3"><div class="fi"><label>Part Type</label><input type="text" id="mw-p1-type" placeholder="Initial Call"></div><div class="fi"><label>Student</label><input type="text" id="mw-p1-stu" list="pub-list-dl"></div><div class="fi"><label>Assistant</label><input type="text" id="mw-p1-asst" list="pub-list-dl"></div></div>
+    <div class="row3"><div class="fi"><label>Part Type</label><input type="text" id="mw-p2-type" placeholder="Return Visit"></div><div class="fi"><label>Student</label><input type="text" id="mw-p2-stu" list="pub-list-dl"></div><div class="fi"><label>Assistant</label><input type="text" id="mw-p2-asst" list="pub-list-dl"></div></div>
+    <div class="row3"><div class="fi"><label>Part Type</label><input type="text" id="mw-p3-type" placeholder="Bible Study"></div><div class="fi"><label>Student</label><input type="text" id="mw-p3-stu" list="pub-list-dl"></div><div class="fi"><label>Assistant</label><input type="text" id="mw-p3-asst" list="pub-list-dl"></div></div>
+    <div class="row3"><div class="fi"><label>Part Type</label><input type="text" id="mw-p4-type" placeholder="Talk"></div><div class="fi"><label>Student</label><input type="text" id="mw-p4-stu" list="pub-list-dl"></div><div class="fi"><label>Assistant</label><input type="text" id="mw-p4-asst" list="pub-list-dl"></div></div>
+    <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;margin:12px 0 8px">Living as Christians</div>
+    <div class="row2"><div class="fi"><label>Part Title</label><input type="text" id="mw-lac1-title"></div><div class="fi"><label>Speaker</label><input type="text" id="mw-lac1-who" list="pub-list-dl"></div></div>
+    <div class="row2"><div class="fi"><label>CBS Conductor</label><input type="text" id="mw-cbs-cond" list="pub-list-dl"></div><div class="fi"><label>CBS Reader</label><input type="text" id="mw-cbs-read" list="pub-list-dl"></div></div>
+    <div class="row2"><div class="fi"><label>Closing Song #</label><input type="text" id="mw-song3"></div><div class="fi"><label>Closing Prayer</label><input type="text" id="mw-pray-close" list="pub-list-dl"></div></div>
+    <div style="display:flex;gap:9px;margin-top:14px"><button class="btn btn-gold" onclick="saveMW()">Save</button><button class="btn btn-outline" onclick="closeM('m-addmw')">Cancel</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="m-addwk">
+  <div class="modal-box">
+    <div class="modal-title">Add Weekend Schedule</div>
+    <div class="row2"><div class="fi"><label>Date</label><input type="date" id="wk-date"></div><div class="fi"><label>Time</label><input type="time" id="wk-time" value="10:00"></div></div>
+    <div class="row2"><div class="fi"><label>Chairman</label><input type="text" id="wk-chair" list="pub-list-dl"></div><div class="fi"><label>Opening Prayer</label><input type="text" id="wk-pray-open" list="pub-list-dl"></div></div>
+    <div class="fi"><label>Opening Song #</label><input type="text" id="wk-song1"></div>
+    <div class="row2"><div class="fi"><label>Talk Title</label><input type="text" id="wk-talk-title"></div><div class="fi"><label>Speaker</label><input type="text" id="wk-speaker" list="pub-list-dl"></div></div>
+    <div class="row2"><div class="fi"><label>WT Article Title</label><input type="text" id="wk-wt-title"></div><div class="fi"><label>WT Conductor</label><input type="text" id="wk-wt-cond" list="pub-list-dl"></div></div>
+    <div class="row2"><div class="fi"><label>WT Reader</label><input type="text" id="wk-wt-read" list="pub-list-dl"></div><div class="fi"><label>Closing Song #</label><input type="text" id="wk-song2"></div></div>
+    <div class="fi"><label>Closing Prayer</label><input type="text" id="wk-pray-close" list="pub-list-dl"></div>
+    <div style="display:flex;gap:9px;margin-top:14px"><button class="btn btn-gold" onclick="saveWK()">Save</button><button class="btn btn-outline" onclick="closeM('m-addwk')">Cancel</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="m-addfsm">
+  <div class="modal-box">
+    <div class="modal-title">Add Field Service Meeting</div>
+    <div class="row2"><div class="fi"><label>Date</label><input type="date" id="fsm-date"></div><div class="fi"><label>Time</label><input type="time" id="fsm-time" value="08:00"></div></div>
+    <div class="fi"><label>Meeting Place</label><input type="text" id="fsm-place"></div>
+    <div class="fi"><label>Address</label><input type="text" id="fsm-address"></div>
+    <div class="row2"><div class="fi"><label>Conductor</label><input type="text" id="fsm-conductor" list="pub-list-dl"></div><div class="fi"><label>Territory</label><input type="text" id="fsm-territory"></div></div>
+    <div class="fi"><label>Group</label><select id="fsm-group"><option value="All">All Groups</option></select></div>
+    <div class="fi"><label>Notes</label><textarea id="fsm-notes" rows="2"></textarea></div>
+    <div style="display:flex;gap:9px;margin-top:14px"><button class="btn btn-gold" onclick="saveFSM()">Save</button><button class="btn btn-outline" onclick="closeM('m-addfsm')">Cancel</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="m-notif">
+  <div class="modal-box">
+    <div class="modal-title">&#128276; Send Notification</div>
+    <div class="fi"><label>Title</label><input type="text" id="notif-title" placeholder="Meeting Reminder"></div>
+    <div class="fi"><label>Message</label><textarea id="notif-body" rows="3" placeholder="This week's meeting starts at 7pm..."></textarea></div>
+    <div class="fi"><label>Send to Group</label><select id="notif-group"><option value="All">All Publishers</option></select></div>
+    <div style="display:flex;gap:9px;margin-top:14px"><button class="btn btn-gold" onclick="sendNotif()">Send</button><button class="btn btn-outline" onclick="closeM('m-notif')">Cancel</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="m-np">
+  <div class="modal-box">
+    <div class="modal-title">&#128276; Notifications</div>
+    <div id="notif-list" style="max-height:300px;overflow-y:auto"></div>
+    <button class="btn btn-outline" style="margin-top:14px" onclick="closeM('m-np')">Close</button>
+  </div>
+</div>
+<div class="modal-bg" id="m-confirm">
+  <div class="modal-box" style="max-width:320px;text-align:center">
+    <div class="modal-title" id="cfm-msg">Are you sure?</div>
+    <div style="display:flex;gap:9px;justify-content:center;margin-top:14px">
+      <button class="btn btn-gold" id="cfm-yes">Yes</button>
+      <button class="btn btn-outline" id="cfm-no">Cancel</button>
+    </div>
   </div>
 </div>
 <div class="modal-bg" id="m-editpub">
   <div class="modal-box">
     <div class="modal-title">Edit Publisher</div>
     <input type="hidden" id="ep-id">
-    <div class="row2"><div class="fi"><label>Full Name</label><input type="text" id="ep-name"></div><div class="fi"><label>New PIN (blank = keep)</label><input type="password" id="ep-pin" maxlength="6" inputmode="numeric"></div></div>
-    <div class="row2"><div class="fi"><label>Group</label><select id="ep-group"><option value="">No group</option></select></div><div class="fi"><label>Role</label><select id="ep-role"><option value="publisher">Publisher</option><option value="elder">Elder</option><option value="ms">Ministerial Servant</option><option value="pioneer">Pioneer</option></select></div></div>
-    <div class="fi" style="background:#f0eef8;border-radius:8px;padding:10px 13px;display:flex;align-items:center;gap:9px"><input type="checkbox" id="ep-admin" style="width:16px;height:16px;accent-color:var(--navy);cursor:pointer"><label for="ep-admin" style="font-size:13px;font-weight:700;color:var(--navy);cursor:pointer;text-transform:none;letter-spacing:0;margin:0">Admin / ACS Access</label></div>
-    <div class="modal-actions"><button class="btn btn-outline" onclick="closeM('m-editpub')">Cancel</button><button class="btn btn-primary" onclick="saveEditPub()">Save Changes</button></div>
+    <div class="row2"><div class="fi"><label>Full Name</label><input type="text" id="ep-name"></div><div class="fi"><label>New PIN (leave blank to keep)</label><input type="password" id="ep-pin" maxlength="6" inputmode="numeric"></div></div>
+    <div class="row2"><div class="fi"><label>Group</label><select id="ep-group"></select></div><div class="fi"><label>Role</label><select id="ep-role"><option value="publisher">Publisher</option><option value="ms">Min. Servant</option><option value="elder">Elder</option></select></div></div>
+    <div class="fi" style="display:flex;align-items:center;gap:9px"><input type="checkbox" id="ep-admin"><label for="ep-admin">Admin access</label></div>
+    <div style="display:flex;gap:9px;margin-top:14px"><button class="btn btn-gold" onclick="saveEditPub()">Save</button><button class="btn btn-outline" onclick="closeM('m-editpub')">Cancel</button></div>
   </div>
 </div>
-<div class="modal-bg" id="m-addgrp">
-  <div class="modal-box">
-    <div class="modal-title">Add Group</div>
-    <div class="fi"><label>Group Name</label><input type="text" id="ng-name" placeholder="e.g. Group 1"></div>
-    <div class="row2"><div class="fi"><label>Overseer</label><input type="text" id="ng-overseer"></div><div class="fi"><label>Assistant Overseer</label><input type="text" id="ng-asst"></div></div>
-    <div class="modal-actions"><button class="btn btn-outline" onclick="closeM('m-addgrp')">Cancel</button><button class="btn btn-primary" onclick="addGroup()">Add Group</button></div>
-  </div>
-</div>
-<div class="modal-bg" id="m-editgrp">
-  <div class="modal-box">
-    <div class="modal-title">Edit Group</div>
-    <input type="hidden" id="eg-id">
-    <div class="fi"><label>Group Name</label><input type="text" id="eg-name"></div>
-    <div class="row2"><div class="fi"><label>Overseer</label><input type="text" id="eg-overseer"></div><div class="fi"><label>Assistant Overseer</label><input type="text" id="eg-asst"></div></div>
-    <div class="modal-actions"><button class="btn btn-outline" onclick="closeM('m-editgrp')">Cancel</button><button class="btn btn-primary" onclick="saveEditGrp()">Save Changes</button></div>
-  </div>
-</div>
-<div class="modal-bg" id="m-mw">
-  <div class="modal-box">
-    <div class="modal-title">Midweek Meeting Schedule</div>
-    <div class="row2"><div class="fi"><label>Week of</label><input type="date" id="mw-date"></div><div class="fi"><label>Time</label><input type="time" id="mw-time" value="19:00"></div></div>
-    <div class="row2"><div class="fi"><label>Opening Song No.</label><input type="text" id="mw-song1" placeholder="e.g. 52"></div><div class="fi"><label>Opening Prayer</label><input type="text" id="mw-pray-open"></div></div>
-    <div class="fi"><label>Chairman</label><input type="text" id="mw-chairman"></div>
-    <div class="hr"></div>
-    <div class="sec-head">1 - Treasures From God's Word</div>
-    <div class="row2"><div class="fi"><label>Talk Title</label><input type="text" id="mw-talk"></div><div class="fi"><label>Speaker (10 min)</label><input type="text" id="mw-talk-who"></div></div>
-    <div class="row2"><div class="fi"><label>Spiritual Gems Conductor (10 min)</label><input type="text" id="mw-gems-who"></div><div class="fi"><label>Bible Reading Student (4 min)</label><input type="text" id="mw-bible-read"></div></div>
-    <div class="fi"><label>Middle Song No.</label><input type="text" id="mw-song2" placeholder="e.g. 88"></div>
-    <div class="hr"></div>
-    <div class="sec-head">2 - Apply Yourself to the Field Ministry (15 min)</div>
-    <div class="aply-part"><div class="aply-lbl">Part 1</div>
-      <div class="row2"><div class="fi"><label>Assignment Type</label><select id="mw-p1-type"><option value="">Select type</option><option value="Starting a Conversation">Starting a Conversation (3 min)</option><option value="Follow-Up">Follow-Up (4 min)</option><option value="Talk">Talk (5 min)</option><option value="Bible Study">Bible Study (6 min)</option><option value="House to House">House to House</option><option value="Public Witnessing">Public Witnessing</option><option value="Informal Witnessing">Informal Witnessing</option><option value="Discussion">Discussion (Elder/MS)</option></select></div><div class="fi"><label>Study Point / Theme</label><input type="text" id="mw-p1-theme" placeholder="e.g. Be Natural and Warm"></div></div>
-      <div class="row2"><div class="fi"><label>Student</label><input type="text" id="mw-p1-student"></div><div class="fi"><label>Assistant / Householder</label><input type="text" id="mw-p1-asst"></div></div>
-    </div>
-    <div class="aply-part"><div class="aply-lbl">Part 2</div>
-      <div class="row2"><div class="fi"><label>Assignment Type</label><select id="mw-p2-type"><option value="">Select type</option><option value="Starting a Conversation">Starting a Conversation (3 min)</option><option value="Follow-Up">Follow-Up (4 min)</option><option value="Talk">Talk (5 min)</option><option value="Bible Study">Bible Study (6 min)</option><option value="House to House">House to House</option><option value="Public Witnessing">Public Witnessing</option><option value="Informal Witnessing">Informal Witnessing</option><option value="Discussion">Discussion (Elder/MS)</option></select></div><div class="fi"><label>Study Point / Theme</label><input type="text" id="mw-p2-theme"></div></div>
-      <div class="row2"><div class="fi"><label>Student</label><input type="text" id="mw-p2-student"></div><div class="fi"><label>Assistant / Householder</label><input type="text" id="mw-p2-asst"></div></div>
-    </div>
-    <div class="aply-part"><div class="aply-lbl">Part 3 (if applicable)</div>
-      <div class="row2"><div class="fi"><label>Assignment Type</label><select id="mw-p3-type"><option value="">Not used</option><option value="Starting a Conversation">Starting a Conversation (3 min)</option><option value="Follow-Up">Follow-Up (4 min)</option><option value="Talk">Talk (5 min)</option><option value="Bible Study">Bible Study (6 min)</option><option value="House to House">House to House</option><option value="Public Witnessing">Public Witnessing</option><option value="Discussion">Discussion (Elder/MS)</option></select></div><div class="fi"><label>Study Point / Theme</label><input type="text" id="mw-p3-theme"></div></div>
-      <div class="row2"><div class="fi"><label>Student</label><input type="text" id="mw-p3-student"></div><div class="fi"><label>Assistant / Householder</label><input type="text" id="mw-p3-asst"></div></div>
-    </div>
-    <div class="aply-part"><div class="aply-lbl">Part 4 (if applicable)</div>
-      <div class="row2"><div class="fi"><label>Assignment Type</label><select id="mw-p4-type"><option value="">Not used</option><option value="Starting a Conversation">Starting a Conversation (3 min)</option><option value="Follow-Up">Follow-Up (4 min)</option><option value="Talk">Talk (5 min)</option><option value="Bible Study">Bible Study (6 min)</option><option value="House to House">House to House</option><option value="Public Witnessing">Public Witnessing</option><option value="Discussion">Discussion (Elder/MS)</option></select></div><div class="fi"><label>Study Point / Theme</label><input type="text" id="mw-p4-theme"></div></div>
-      <div class="row2"><div class="fi"><label>Student</label><input type="text" id="mw-p4-student"></div><div class="fi"><label>Assistant / Householder</label><input type="text" id="mw-p4-asst"></div></div>
-    </div>
-    <div class="hr"></div>
-    <div class="sec-head">3 - Living as Christians (30 min)</div>
-    <div class="row2"><div class="fi"><label>Part 1 Title</label><input type="text" id="mw-lac1-title" placeholder="e.g. Local Needs"></div><div class="fi"><label>Speaker / Conductor</label><input type="text" id="mw-lac1-who"></div></div>
-    <div class="row2"><div class="fi"><label>Part 2 Title (optional)</label><input type="text" id="mw-lac2-title"></div><div class="fi"><label>Speaker</label><input type="text" id="mw-lac2-who"></div></div>
-    <div class="row2"><div class="fi"><label>CBS Conductor</label><input type="text" id="mw-cbs-cond"></div><div class="fi"><label>CBS Reader</label><input type="text" id="mw-cbs-read"></div></div>
-    <div class="row2"><div class="fi"><label>Closing Song No.</label><input type="text" id="mw-song3" placeholder="e.g. 134"></div><div class="fi"><label>Closing Prayer</label><input type="text" id="mw-pray-close"></div></div>
-    <div class="modal-actions"><button class="btn btn-outline" onclick="closeM('m-mw')">Cancel</button><button class="btn btn-primary" onclick="saveMW()">Save Schedule</button></div>
-  </div>
-</div>
-<div class="modal-bg" id="m-wk">
-  <div class="modal-box">
-    <div class="modal-title">Weekend Meeting Schedule</div>
-    <div class="row2"><div class="fi"><label>Date</label><input type="date" id="wk-date"></div><div class="fi"><label>Time</label><input type="time" id="wk-time" value="10:00"></div></div>
-    <div class="row2"><div class="fi"><label>Opening Song No.</label><input type="text" id="wk-song1"></div><div class="fi"><label>Chairman</label><input type="text" id="wk-chairman"></div></div>
-    <div class="row2"><div class="fi"><label>Opening Prayer</label><input type="text" id="wk-pray-open"></div><div class="fi"><label>Closing Prayer</label><input type="text" id="wk-pray-close"></div></div>
-    <div class="hr"></div>
-    <div class="sec-head">Public Talk</div>
-    <div class="fi"><label>Talk Title</label><input type="text" id="wk-talk-title"></div>
-    <div class="fi"><label>Speaker (Brother and Congregation)</label><input type="text" id="wk-speaker" placeholder="e.g. Bro. James, Downtown Cong."></div>
-    <div class="hr"></div>
-    <div class="sec-head">Watchtower Study</div>
-    <div class="fi"><label>Article Title</label><input type="text" id="wk-wt-title"></div>
-    <div class="row2"><div class="fi"><label>Conductor</label><input type="text" id="wk-wt-cond"></div><div class="fi"><label>Reader</label><input type="text" id="wk-wt-read"></div></div>
-    <div class="fi"><label>Closing Song No.</label><input type="text" id="wk-song2"></div>
-    <div class="modal-actions"><button class="btn btn-outline" onclick="closeM('m-wk')">Cancel</button><button class="btn btn-primary" onclick="saveWK()">Save Schedule</button></div>
-  </div>
-</div>
-<div class="modal-bg" id="m-fsm">
-  <div class="modal-box">
-    <div class="modal-title">Field Service Meeting</div>
-    <div class="row2"><div class="fi"><label>Date</label><input type="date" id="fsm-date"></div><div class="fi"><label>Time</label><input type="time" id="fsm-time" value="09:00"></div></div>
-    <div class="fi"><label>Meeting Place / Host</label><input type="text" id="fsm-place" placeholder="Kingdom Hall or Brother's home"></div>
-    <div class="fi"><label>Address</label><input type="text" id="fsm-address"></div>
-    <div class="row2"><div class="fi"><label>Group</label><select id="fsm-group"><option value="All">All Groups</option></select></div><div class="fi"><label>Conductor</label><input type="text" id="fsm-conductor"></div></div>
-    <div class="fi"><label>Territory / Area</label><input type="text" id="fsm-territory"></div>
-    <div class="fi"><label>Notes</label><textarea id="fsm-notes" rows="2"></textarea></div>
-    <div class="modal-actions"><button class="btn btn-outline" onclick="closeM('m-fsm')">Cancel</button><button class="btn btn-primary" onclick="saveFSM()">Save Meeting</button></div>
-  </div>
-</div>
-
-<!-- NOTIFICATION PANEL -->
-<div class="np-bd" id="np-bd" onclick="closeNP()"></div>
-<div class="np-panel" id="np-panel">
-  <div class="np-head">
-    <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700">Notifications</div>
-    <div style="display:flex;gap:7px;align-items:center">
-      <button onclick="markAllRead()" style="font-size:11px;background:rgba(255,255,255,0.15);border:none;color:#fff;padding:4px 9px;border-radius:5px;cursor:pointer;font-weight:700">Mark all read</button>
-      <button onclick="closeNP()" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1;padding:0 3px">&#x2715;</button>
-    </div>
-  </div>
-  <div class="np-list" id="np-list"></div>
-  <div class="np-foot"><button onclick="reqPush()" id="push-btn" style="width:100%;padding:10px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Lato',sans-serif">Enable Push Notifications</button></div>
-</div>
-
-<div id="toast"></div>
-<div id="install-banner">
-  <div style="display:flex;align-items:center;gap:11px"><img src="icons/icon-192.png" style="width:38px;height:38px;border-radius:9px"><div><div style="font-weight:700;font-size:13px">Install Ministry App</div><div style="font-size:11px;opacity:0.5">Works offline on your home screen</div></div></div>
-  <div style="display:flex;gap:7px"><button onclick="document.getElementById('install-banner').style.display='none'" style="background:rgba(255,255,255,0.15);border:none;color:#fff;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:13px">Later</button><button onclick="installPWA()" style="background:var(--gold);border:none;color:var(--navy);padding:7px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700">Install</button></div>
-</div>
+<datalist id="pub-list-dl"></datalist>
+<div id="toast-box"></div>
 
 <script>
 // ============================================================
@@ -672,10 +746,10 @@ function launchPublisher(){
   document.getElementById('pub-pill').textContent=currentUser.name;
   document.getElementById('pub-welcome').textContent='Welcome, '+currentUser.name.split(' ')[0]+'!';
   document.getElementById('pub-mlbl').textContent=now.toLocaleString('default',{month:'long',year:'numeric'});
-  // Show GAS url in publisher sync tab if already saved
-  var pgi=document.getElementById('pub-gas-url-input'); if(pgi&&GAS_URL)pgi.value=GAS_URL;
+  // Show Firebase url in publisher sync tab if already saved
+  var pgi=document.getElementById('pub-fb-url-input'); if(pgi&&FB_URL)pgi.value=FB_URL;
   var pgs=document.getElementById('pub-gas-status');
-  if(pgs){pgs.textContent=GAS_URL?'✅ Connected — syncing automatically.':'Paste the Web App URL from your admin to enable sync.';}
+  if(pgs){pgs.textContent=FB_URL?'✅ Connected — syncing automatically.':'Paste the Database URL from your admin to enable sync.';}
   document.getElementById('pub-rpt-sub').textContent='Report for '+now.toLocaleString('default',{month:'long',year:'numeric'});
   sv('rpt-month',now.toISOString().slice(0,7));
   fillAllGrps();
@@ -1271,7 +1345,7 @@ function connectPubFirebase(){
   var url=(document.getElementById('pub-gas-url-input').value||'').trim();
   var res=document.getElementById('pub-gas-result');
   if(!url){res.textContent='⚠️ Paste the URL from admin first.';res.style.color='#e53935';return;}
-  GAS_URL=url; SYNC_READY=true; localStorage.setItem('cma_gas_url',url);
+  FB_URL=url; SYNC_READY=true; localStorage.setItem('cma_fb_url',url);
   res.textContent='⏳ Connecting…';res.style.color='#c8a94a';
   pullFromCloud(function(ok){
     if(ok){
@@ -1280,7 +1354,7 @@ function connectPubFirebase(){
       renderPubHome();renderPubMW();renderPubWK();renderPubFSM();
       toast('✅ Sync active!');
     } else {
-      GAS_URL=''; SYNC_READY=false; localStorage.removeItem('cma_gas_url');
+      FB_URL=''; SYNC_READY=false; localStorage.removeItem('cma_fb_url');
       res.textContent='❌ Could not connect. Check the URL and internet.';res.style.color='#e53935';
     }
   });
