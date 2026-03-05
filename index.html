@@ -259,7 +259,7 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
         <div class="card-title">&#128279; Connect to Cloud</div>
         <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Ask your admin for the <strong>Database URL</strong> and paste it below.</p>
         <div class="fi"><label>&#127758; Database URL (from admin)</label>
-          <input type="url" id="pub-fb-url-input" placeholder="https://yourproject-default-rtdb.firebaseio.com" style="font-size:12px;" value="https://ministry-assistant-48b08-default-rtdb.europe-west1.firebaseio.com">
+          <input type="url" id="pub-fb-url-input" placeholder="https://yourproject-default-rtdb.firebaseio.com" style="font-size:12px;" value="https://ministry-assistant-48b08-default-rtdb.europe-west1.firebasedatabase.app">
         </div>
         <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
           <button class="btn btn-gold" onclick="connectPubFirebase()">&#128279; Connect</button>
@@ -367,7 +367,7 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
           <strong style="color:var(--navy)">5.</strong> Paste below &rarr; tap <strong>Save &amp; Connect</strong>. Share same URL with publishers.
         </div>
         <div class="fi"><label>&#127758; Database URL</label>
-          <input type="url" id="fb-url-input" placeholder="https://yourproject-default-rtdb.firebaseio.com" style="font-size:12px;" value="https://ministry-assistant-48b08-default-rtdb.europe-west1.firebaseio.com">
+          <input type="url" id="fb-url-input" placeholder="https://yourproject-default-rtdb.firebaseio.com" style="font-size:12px;" value="https://ministry-assistant-48b08-default-rtdb.europe-west1.firebasedatabase.app">
         </div>
         <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:center">
           <button class="btn btn-gold" onclick="connectFirebase()">&#128190; Save &amp; Connect</button>
@@ -510,7 +510,7 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
 // ============================================================
 // DATA LAYER — Firebase Realtime Database (free, no CORS issues)
 // ============================================================
-var FB_URL    = localStorage.getItem('cma_fb_url') || 'https://ministry-assistant-48b08-default-rtdb.europe-west1.firebaseio.com';
+var FB_URL    = localStorage.getItem('cma_fb_url') || 'https://ministry-assistant-48b08-default-rtdb.europe-west1.firebasedatabase.app';
 var SYNC_READY = true; // Firebase URL hardcoded
 var _pushDebounce = null;
 var _syncTimer    = null;
@@ -565,7 +565,13 @@ function saveAll(){
   lcSet('groups',groups);lcSet('publishers',publishers);lcSet('reports',reports);
   lcSet('midweeks',midweeks);lcSet('weekends',weekends);lcSet('fsms',fsms);
   lcSet('notifs',notifs);lcSet('zoomInfo',zoomInfo);
-  if(SYNC_READY){clearTimeout(_pushDebounce);_pushDebounce=setTimeout(pushToCloud,1200);}
+  if(SYNC_READY){clearTimeout(_pushDebounce);_pushDebounce=setTimeout(pushToCloud,300);}
+}
+function saveAndPushNow(){
+  lcSet('groups',groups);lcSet('publishers',publishers);lcSet('reports',reports);
+  lcSet('midweeks',midweeks);lcSet('weekends',weekends);lcSet('fsms',fsms);
+  lcSet('notifs',notifs);lcSet('zoomInfo',zoomInfo);
+  if(SYNC_READY){clearTimeout(_pushDebounce);pushToCloud();}
 }
 
 function pushToCloud(){
@@ -579,12 +585,16 @@ function pullFromCloud(onDone){
   if(!SYNC_READY){setSyncStatus('nokey');if(onDone)onDone(false);return;}
   setSyncStatus('syncing');
   fbRead(function(err,data){
-    if(err||!data){setSyncStatus('error');if(onDone)onDone(false);return;}
+    if(err||!data){setSyncStatus('offline');if(onDone)onDone(false);return;}
     var ch=false;
     ['groups','publishers','reports','midweeks','weekends','fsms'].forEach(function(k){
-      if(data[k]&&Array.isArray(data[k])&&data[k].length>0){window[k]=data[k];lcSet(k,data[k]);ch=true;}
+      if(data[k]&&Array.isArray(data[k])&&data[k].length>0){
+        window[k]=data[k];lcSet(k,data[k]);ch=true;
+      }
     });
-    if(data.zoomInfo){zoomInfo=data.zoomInfo;lcSet('zoomInfo',zoomInfo);}
+    if(data.zoomInfo&&data.zoomInfo.midweekId!==undefined){
+      zoomInfo=data.zoomInfo;lcSet('zoomInfo',zoomInfo);ch=true;
+    }
     setSyncStatus('ok');
     if(onDone)onDone(ch);
   });
@@ -602,11 +612,43 @@ function startAutoSync(){
         updateBadge();
       }catch(e){}
     });
-  },20000);
+  },10000); // every 10 seconds
 }
+// Also sync when app comes back to focus (phone unlocked, tab switched back)
+window.addEventListener('focus',function(){
+  if(!currentUser||!SYNC_READY)return;
+  pullFromCloud(function(ch){
+    if(!ch)return;
+    try{
+      if(currentUser.isAdmin){renderAdmHome();renderAdmReports();renderPubs();renderAdmMW();renderAdmWK();renderAdmFSM();renderGroups();}
+      else{renderPubHome();renderPubMW();renderPubWK();renderPubFSM();}
+      updateBadge();
+    }catch(e){}
+  });
+});
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'&&currentUser&&SYNC_READY){
+    pullFromCloud(function(ch){
+      if(!ch)return;
+      try{
+        if(currentUser.isAdmin){renderAdmHome();renderAdmMW();renderAdmWK();}
+        else{renderPubHome();renderPubMW();renderPubWK();}
+      }catch(e){}
+    });
+  }
+});
 
 window.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')saveAll();});
 window.addEventListener('pagehide',function(){saveAll();});
+
+// Auto-pull on app load so publishers list is always fresh
+(function(){
+  if(SYNC_READY){
+    pullFromCloud(function(ch){
+      if(ch){console.log('[sync] Initial pull got fresh data');}
+    });
+  }
+})();
 
 // ============================================================
 // HELPERS
@@ -688,6 +730,7 @@ function doRegister(){
   var newPub={id:'p'+uid(),name:name,pin:pin,group:grp,role:'publisher',isAdmin:false};
   publishers.push(newPub);
   saveAll();
+  pushToCloud(); // immediate push so other devices see new publisher
   currentUser=newPub;
   launchPublisher();
 }
@@ -746,26 +789,17 @@ function launchPublisher(){
   document.getElementById('pub-pill').textContent=currentUser.name;
   document.getElementById('pub-welcome').textContent='Welcome, '+currentUser.name.split(' ')[0]+'!';
   document.getElementById('pub-mlbl').textContent=now.toLocaleString('default',{month:'long',year:'numeric'});
-  // Show Firebase url in publisher sync tab if already saved
   var pgi=document.getElementById('pub-fb-url-input'); if(pgi&&FB_URL)pgi.value=FB_URL;
   var pgs=document.getElementById('pub-gas-status');
-  if(pgs){pgs.textContent=FB_URL?'✅ Connected — syncing automatically.':'Paste the Database URL from your admin to enable sync.';}
-  document.getElementById('pub-rpt-sub').textContent='Report for '+now.toLocaleString('default',{month:'long',year:'numeric'});
-  sv('rpt-month',now.toISOString().slice(0,7));
-  fillAllGrps();
-  fillGrpSelect('rpt-group',currentUser.group,false);
-  // Show local data instantly, then refresh from cloud
-  renderPubHome();renderPubMW();renderPubWK();renderPubFSM();
-  updateBadge();
-  setSyncStatus('syncing');
-  pullFromCloud(function(){
-    // Re-render with fresh data
-    fillAllGrps();fillGrpSelect('rpt-group',currentUser.group,false);
-    renderPubHome();renderPubMW();renderPubWK();renderPubFSM();
-    updateBadge();
+  if(pgs){pgs.textContent=FB_URL?'✅ Connected — syncing automatically.':'Not connected.';}
+  // Render from local cache immediately
+  renderPubHome();renderPubMW();renderPubWK();renderPubFSM();updateBadge();
+  // Then pull latest from cloud and re-render
+  pullFromCloud(function(ch){
+    if(ch){renderPubHome();renderPubMW();renderPubWK();renderPubFSM();updateBadge();}
+    setSyncStatus(SYNC_READY?'ok':'nokey');
   });
   startAutoSync();
-  setTimeout(checkReminders,2000);
 }
 function pubNav(btn,tid){
   ['pt-home','pt-report','pt-midweek','pt-weekend','pt-fsm','pt-sync'].forEach(function(t){document.getElementById(t).style.display='none';});
@@ -1241,7 +1275,7 @@ function connectFirebase(){
   var res=document.getElementById('fb-result');
   if(!url){res.textContent='⚠️ Paste your Database URL first.';res.style.color='#e53935';return;}
   // Accept any firebase URL format including regional
-  if(!url.includes('firebase')){res.textContent='⚠️ Does not look like a Firebase URL';res.style.color='#e53935';return;}
+  if(!url.includes('firebase')&&!url.includes('firebasedatabase')){res.textContent='⚠️ Does not look like a Firebase URL';res.style.color='#e53935';return;}
   // Make sure URL has https://
   if(!url.startsWith('https://'))url='https://'+url;
   res.textContent='⏳ Connecting to '+url+'…';res.style.color='#c8a94a';
