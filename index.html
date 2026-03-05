@@ -1240,23 +1240,38 @@ function connectFirebase(){
   var url=(document.getElementById('fb-url-input').value||'').trim().replace(/\/+$/,'');
   var res=document.getElementById('fb-result');
   if(!url){res.textContent='⚠️ Paste your Database URL first.';res.style.color='#e53935';return;}
-  if(!url.includes('firebaseio.com')&&!url.includes('firebase')){res.textContent='⚠️ URL must be a Firebase database URL';res.style.color='#e53935';return;}
-  res.textContent='⏳ Testing…';res.style.color='#c8a94a';
-  fetch(url+'/cma.json')
+  // Accept any firebase URL format including regional
+  if(!url.includes('firebase')){res.textContent='⚠️ Does not look like a Firebase URL';res.style.color='#e53935';return;}
+  // Make sure URL has https://
+  if(!url.startsWith('https://'))url='https://'+url;
+  res.textContent='⏳ Connecting to '+url+'…';res.style.color='#c8a94a';
+  fetch(url+'/cma.json',{method:'GET'})
     .then(function(r){
+      res.textContent='Got HTTP '+r.status;
       if(r.status===401||r.status===403){
-        res.textContent='❌ Permission denied. Set database rules to public (see step 4).';
-        res.style.color='#e53935';return;
+        res.textContent='❌ Permission denied ('+r.status+'). Go to Firebase → Rules tab → make sure ".read":true and ".write":true → click Publish.';
+        res.style.color='#e53935';return null;
       }
-      if(!r.ok)throw new Error('HTTP '+r.status);
+      if(r.status===404){
+        res.textContent='❌ Database not found (404). Check the URL is correct.';
+        res.style.color='#e53935';return null;
+      }
+      if(!r.ok){
+        res.textContent='❌ Error '+r.status+'. Check URL.';
+        res.style.color='#e53935';return null;
+      }
+      return r.text();
+    })
+    .then(function(txt){
+      if(txt===null)return;
       FB_URL=url;SYNC_READY=true;localStorage.setItem('cma_fb_url',url);
       pushToCloud();
-      res.textContent='✅ Connected! Data syncing now.';res.style.color='#4caf50';
+      res.textContent='✅ Connected! Syncing now.';res.style.color='#4caf50';
       updateFBStatusLine();setSyncStatus('ok');startAutoSync();
       toast('✅ Cloud sync active!');
     })
     .catch(function(e){
-      res.textContent='❌ Could not connect. Check URL and database rules.';
+      res.textContent='❌ Network error: '+e.message+'. Check internet connection.';
       res.style.color='#e53935';
     });
 }
