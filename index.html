@@ -259,7 +259,7 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
         <div class="card-title">&#128279; Connect to Cloud</div>
         <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Ask your admin for the <strong>Database URL</strong> and paste it below.</p>
         <div class="fi"><label>&#127758; Database URL (from admin)</label>
-          <input type="url" id="pub-fb-url-input" placeholder="https://yourproject-default-rtdb.firebaseio.com" style="font-size:12px;">
+          <input type="url" id="pub-fb-url-input" placeholder="https://yourproject-default-rtdb.firebaseio.com" style="font-size:12px;" value="https://ministry-assistant-48b08-default-rtdb.europe-west1.firebaseio.com">
         </div>
         <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
           <button class="btn btn-gold" onclick="connectPubFirebase()">&#128279; Connect</button>
@@ -367,7 +367,7 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
           <strong style="color:var(--navy)">5.</strong> Paste below &rarr; tap <strong>Save &amp; Connect</strong>. Share same URL with publishers.
         </div>
         <div class="fi"><label>&#127758; Database URL</label>
-          <input type="url" id="fb-url-input" placeholder="https://yourproject-default-rtdb.firebaseio.com" style="font-size:12px;">
+          <input type="url" id="fb-url-input" placeholder="https://yourproject-default-rtdb.firebaseio.com" style="font-size:12px;" value="https://ministry-assistant-48b08-default-rtdb.europe-west1.firebaseio.com">
         </div>
         <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:center">
           <button class="btn btn-gold" onclick="connectFirebase()">&#128190; Save &amp; Connect</button>
@@ -510,8 +510,8 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
 // ============================================================
 // DATA LAYER — Firebase Realtime Database (free, no CORS issues)
 // ============================================================
-var FB_URL    = localStorage.getItem('cma_fb_url') || '';
-var SYNC_READY = !!FB_URL;
+var FB_URL    = localStorage.getItem('cma_fb_url') || 'https://ministry-assistant-48b08-default-rtdb.europe-west1.firebaseio.com';
+var SYNC_READY = true; // Firebase URL hardcoded
 var _pushDebounce = null;
 var _syncTimer    = null;
 
