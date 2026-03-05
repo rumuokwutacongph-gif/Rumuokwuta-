@@ -1240,7 +1240,7 @@ function connectFirebase(){
   var url=(document.getElementById('fb-url-input').value||'').trim().replace(/\/+$/,'');
   var res=document.getElementById('fb-result');
   if(!url){res.textContent='⚠️ Paste your Database URL first.';res.style.color='#e53935';return;}
-  if(!url.includes('firebaseio.com')){res.textContent='⚠️ URL must end in .firebaseio.com';res.style.color='#e53935';return;}
+  if(!url.includes('firebaseio.com')&&!url.includes('firebase')){res.textContent='⚠️ URL must be a Firebase database URL';res.style.color='#e53935';return;}
   res.textContent='⏳ Testing…';res.style.color='#c8a94a';
   fetch(url+'/cma.json')
     .then(function(r){
