@@ -431,13 +431,15 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
     <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;margin:12px 0 8px">Treasures</div>
     <div class="row3"><div class="fi"><label>Talk (10 min)</label><input type="text" id="mw-talk"></div><div class="fi"><label>Speaker</label><input type="text" id="mw-talk-who" list="pub-list-dl"></div><div class="fi"><label>Gems (10 min)</label><input type="text" id="mw-gems-who" list="pub-list-dl"></div></div>
     <div class="fi"><label>Bible Reading</label><input type="text" id="mw-bible-read" list="pub-list-dl"></div>
-    <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;margin:12px 0 8px">Apply Yourself</div>
-    <div class="row3"><div class="fi"><label>Part Type</label><input type="text" id="mw-p1-type" placeholder="Initial Call"></div><div class="fi"><label>Student</label><input type="text" id="mw-p1-stu" list="pub-list-dl"></div><div class="fi"><label>Assistant</label><input type="text" id="mw-p1-asst" list="pub-list-dl"></div></div>
-    <div class="row3"><div class="fi"><label>Part Type</label><input type="text" id="mw-p2-type" placeholder="Return Visit"></div><div class="fi"><label>Student</label><input type="text" id="mw-p2-stu" list="pub-list-dl"></div><div class="fi"><label>Assistant</label><input type="text" id="mw-p2-asst" list="pub-list-dl"></div></div>
-    <div class="row3"><div class="fi"><label>Part Type</label><input type="text" id="mw-p3-type" placeholder="Bible Study"></div><div class="fi"><label>Student</label><input type="text" id="mw-p3-stu" list="pub-list-dl"></div><div class="fi"><label>Assistant</label><input type="text" id="mw-p3-asst" list="pub-list-dl"></div></div>
-    <div class="row3"><div class="fi"><label>Part Type</label><input type="text" id="mw-p4-type" placeholder="Talk"></div><div class="fi"><label>Student</label><input type="text" id="mw-p4-stu" list="pub-list-dl"></div><div class="fi"><label>Assistant</label><input type="text" id="mw-p4-asst" list="pub-list-dl"></div></div>
+    <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;margin:12px 0 8px">Apply Yourself to the Field Ministry</div>
+    <div class="row3"><div class="fi"><label>Part Type</label><input type="text" id="mw-p1-type" placeholder="Initial Call"></div><div class="fi"><label>&#128100; Student</label><input type="text" id="mw-p1-stu" list="pub-list-dl" placeholder="Student name"></div><div class="fi"><label>&#128101; Householder</label><input type="text" id="mw-p1-asst" list="pub-list-dl" placeholder="Assistant name"></div></div>
+    <div class="row3"><div class="fi"><label>Part Type</label><input type="text" id="mw-p2-type" placeholder="Return Visit"></div><div class="fi"><label>&#128100; Student</label><input type="text" id="mw-p2-stu" list="pub-list-dl" placeholder="Student name"></div><div class="fi"><label>&#128101; Householder</label><input type="text" id="mw-p2-asst" list="pub-list-dl" placeholder="Assistant name"></div></div>
+    <div class="row3"><div class="fi"><label>Part Type</label><input type="text" id="mw-p3-type" placeholder="Bible Study"></div><div class="fi"><label>&#128100; Student</label><input type="text" id="mw-p3-stu" list="pub-list-dl" placeholder="Student name"></div><div class="fi"><label>&#128101; Householder</label><input type="text" id="mw-p3-asst" list="pub-list-dl" placeholder="Assistant name"></div></div>
+    <div class="row3"><div class="fi"><label>Part Type</label><input type="text" id="mw-p4-type" placeholder="Talk"></div><div class="fi"><label>&#128100; Student</label><input type="text" id="mw-p4-stu" list="pub-list-dl" placeholder="Student name"></div><div class="fi"><label>&#128101; Householder</label><input type="text" id="mw-p4-asst" list="pub-list-dl" placeholder="Assistant name"></div></div>
     <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;margin:12px 0 8px">Living as Christians</div>
-    <div class="row2"><div class="fi"><label>Part Title</label><input type="text" id="mw-lac1-title"></div><div class="fi"><label>Speaker</label><input type="text" id="mw-lac1-who" list="pub-list-dl"></div></div>
+    <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;margin:12px 0 8px">Living as Christians</div>
+    <div class="row2"><div class="fi"><label>Part 1 Title</label><input type="text" id="mw-lac1-title" placeholder="e.g. Local Needs"></div><div class="fi"><label>Speaker</label><input type="text" id="mw-lac1-who" list="pub-list-dl"></div></div>
+    <div class="row2"><div class="fi"><label>Part 2 Title (Opening)</label><input type="text" id="mw-lac2-title" placeholder="e.g. Opening for CBS"></div><div class="fi"><label>Speaker</label><input type="text" id="mw-lac2-who" list="pub-list-dl"></div></div>
     <div class="row2"><div class="fi"><label>CBS Conductor</label><input type="text" id="mw-cbs-cond" list="pub-list-dl"></div><div class="fi"><label>CBS Reader</label><input type="text" id="mw-cbs-read" list="pub-list-dl"></div></div>
     <div class="row2"><div class="fi"><label>Closing Song #</label><input type="text" id="mw-song3"></div><div class="fi"><label>Closing Prayer</label><input type="text" id="mw-pray-close" list="pub-list-dl"></div></div>
     <div style="display:flex;gap:9px;margin-top:14px"><button class="btn btn-gold" onclick="saveMW()">Save</button><button class="btn btn-outline" onclick="closeM('m-addmw')">Cancel</button></div>
@@ -448,10 +450,14 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
     <div class="modal-title">Add Weekend Schedule</div>
     <div class="row2"><div class="fi"><label>Date</label><input type="date" id="wk-date"></div><div class="fi"><label>Time</label><input type="time" id="wk-time" value="10:00"></div></div>
     <div class="row2"><div class="fi"><label>Chairman</label><input type="text" id="wk-chair" list="pub-list-dl"></div><div class="fi"><label>Opening Prayer</label><input type="text" id="wk-pray-open" list="pub-list-dl"></div></div>
-    <div class="fi"><label>Opening Song #</label><input type="text" id="wk-song1"></div>
+    <div class="row2"><div class="fi"><label>Opening Song #</label><input type="text" id="wk-song1"></div><div class="fi"><label>Opening Prayer</label><input type="text" id="wk-pray-open" list="pub-list-dl"></div></div>
+    <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;margin:10px 0 8px">Public Talk</div>
     <div class="row2"><div class="fi"><label>Talk Title</label><input type="text" id="wk-talk-title"></div><div class="fi"><label>Speaker</label><input type="text" id="wk-speaker" list="pub-list-dl"></div></div>
+    <div class="fi"><label>Song After Talk #</label><input type="text" id="wk-song2"></div>
+    <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;margin:10px 0 8px">Watchtower Study</div>
+    <div class="row2"><div class="fi"><label>WT Opening Song #</label><input type="text" id="wk-song3"></div><div class="fi"><label>WT Opening Prayer</label><input type="text" id="wk-wt-pray-open" list="pub-list-dl"></div></div>
     <div class="row2"><div class="fi"><label>WT Article Title</label><input type="text" id="wk-wt-title"></div><div class="fi"><label>WT Conductor</label><input type="text" id="wk-wt-cond" list="pub-list-dl"></div></div>
-    <div class="row2"><div class="fi"><label>WT Reader</label><input type="text" id="wk-wt-read" list="pub-list-dl"></div><div class="fi"><label>Closing Song #</label><input type="text" id="wk-song2"></div></div>
+    <div class="row2"><div class="fi"><label>WT Reader</label><input type="text" id="wk-wt-read" list="pub-list-dl"></div><div class="fi"><label>WT Closing Song #</label><input type="text" id="wk-song4"></div></div>
     <div class="fi"><label>Closing Prayer</label><input type="text" id="wk-pray-close" list="pub-list-dl"></div>
     <div style="display:flex;gap:9px;margin-top:14px"><button class="btn btn-gold" onclick="saveWK()">Save</button><button class="btn btn-outline" onclick="closeM('m-addwk')">Cancel</button></div>
   </div>
@@ -903,21 +909,23 @@ function renderPubFSM(){var el=document.getElementById('pub-fsm-list');var today
 
 function buildMWCard(m){
   var p1='',p2='',p3='',p4='';
-  if(m.p1Type||m.p1Student){var lb=(m.p1Type||'Part 1')+(m.p1Theme?' - '+m.p1Theme:'');var vl=[];if(m.p1Student)vl.push('Student: '+m.p1Student);if(m.p1Asst)vl.push('Asst: '+m.p1Asst);p1=sRow(lb,vl.join(' / '));}
-  if(m.p2Type||m.p2Student){var lb=(m.p2Type||'Part 2')+(m.p2Theme?' - '+m.p2Theme:'');var vl=[];if(m.p2Student)vl.push('Student: '+m.p2Student);if(m.p2Asst)vl.push('Asst: '+m.p2Asst);p2=sRow(lb,vl.join(' / '));}
-  if(m.p3Type||m.p3Student){var lb=(m.p3Type||'Part 3')+(m.p3Theme?' - '+m.p3Theme:'');var vl=[];if(m.p3Student)vl.push('Student: '+m.p3Student);if(m.p3Asst)vl.push('Asst: '+m.p3Asst);p3=sRow(lb,vl.join(' / '));}
-  if(m.p4Type||m.p4Student){var lb=(m.p4Type||'Part 4')+(m.p4Theme?' - '+m.p4Theme:'');var vl=[];if(m.p4Student)vl.push('Student: '+m.p4Student);if(m.p4Asst)vl.push('Asst: '+m.p4Asst);p4=sRow(lb,vl.join(' / '));}
+  if(m.p1Type||m.p1Student){var lb=(m.p1Type||'Part 1')+(m.p1Theme?' - '+m.p1Theme:'');var vl=[];if(m.p1Student)vl.push('<strong>Student:</strong> '+m.p1Student);if(m.p1Asst)vl.push('<strong>Asst:</strong> '+m.p1Asst);p1=sRow(lb,vl.join(' &nbsp;|&nbsp; '));}
+  if(m.p2Type||m.p2Student){var lb=(m.p2Type||'Part 2')+(m.p2Theme?' - '+m.p2Theme:'');var vl=[];if(m.p2Student)vl.push('<strong>Student:</strong> '+m.p2Student);if(m.p2Asst)vl.push('<strong>Asst:</strong> '+m.p2Asst);p2=sRow(lb,vl.join(' &nbsp;|&nbsp; '));}
+  if(m.p3Type||m.p3Student){var lb=(m.p3Type||'Part 3')+(m.p3Theme?' - '+m.p3Theme:'');var vl=[];if(m.p3Student)vl.push('<strong>Student:</strong> '+m.p3Student);if(m.p3Asst)vl.push('<strong>Asst:</strong> '+m.p3Asst);p3=sRow(lb,vl.join(' &nbsp;|&nbsp; '));}
+  if(m.p4Type||m.p4Student){var lb=(m.p4Type||'Part 4')+(m.p4Theme?' - '+m.p4Theme:'');var vl=[];if(m.p4Student)vl.push('<strong>Student:</strong> '+m.p4Student);if(m.p4Asst)vl.push('<strong>Asst:</strong> '+m.p4Asst);p4=sRow(lb,vl.join(' &nbsp;|&nbsp; '));}
+  var lac2=(m.lac2Title||m.lac2Who)?sRow(m.lac2Title||'Part 2',m.lac2Who):'';
   return'<div class="sched-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:7px;margin-bottom:14px"><div><div style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:700;color:var(--navy)">Week of '+fmtDate(m.date)+'</div><div style="font-size:13px;color:var(--muted);margin-top:2px">'+fmtTime(m.time)+'</div></div><span class="badge b-navy">Midweek</span></div>'+
   '<div class="s-sec">'+sHead('Opening','#c8a94a')+sRow('Opening Song',m.song1)+sRow('Chairman',m.chairman)+sRow('Opening Prayer',m.prayOpen)+'</div>'+
-  '<div class="s-sec">'+sHead('1 - Treasures From God\'s Word','#1b2d4f')+sRow('Talk (10 min)',(m.talk||'')+(m.talkWho?' - '+m.talkWho:''))+sRow('Spiritual Gems (10 min)',m.gemsWho)+sRow('Bible Reading (4 min)',m.bibleRead)+(m.song2?sRow('Middle Song',m.song2):'')+'</div>'+
+  '<div class="s-sec">'+sHead('1 - Treasures From God\'s Word','#1b2d4f')+sRow('Talk (10 min)',(m.talk||'')+(m.talkWho?' - '+m.talkWho:''))+sRow('Spiritual Gems (10 min)',m.gemsWho)+sRow('Bible Reading (4 min)',m.bibleRead)+'</div>'+
   '<div class="s-sec">'+sHead('2 - Apply Yourself to the Field Ministry','#3d7a52')+p1+p2+p3+p4+'</div>'+
-  '<div class="s-sec">'+sHead('3 - Living as Christians','#5a4a2a')+(m.lac1Title||m.lac1Who?sRow(m.lac1Title||'Part 1',m.lac1Who):'')+sRow('CBS Conductor',m.cbsCond)+sRow('CBS Reader',m.cbsRead)+(m.song3?sRow('Closing Song',m.song3):'')+sRow('Closing Prayer',m.prayClose)+'</div></div>';
+  (m.song2?'<div class="s-sec">'+sRow('&#127929; Middle Song',m.song2)+'</div>':'')+
+  '<div class="s-sec">'+sHead('3 - Living as Christians','#5a4a2a')+(m.lac1Title||m.lac1Who?sRow(m.lac1Title||'Part 1',m.lac1Who):'')+lac2+sRow('CBS Conductor',m.cbsCond)+sRow('CBS Reader',m.cbsRead)+(m.song3?sRow('Closing Song',m.song3):'')+sRow('Closing Prayer',m.prayClose)+'</div></div>';
 }
 function buildWKCard(w){
   return'<div class="sched-card"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:7px;margin-bottom:14px"><div><div style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:700;color:var(--navy)">'+fmtDate(w.date)+'</div><div style="font-size:13px;color:var(--muted);margin-top:2px">'+fmtTime(w.time)+'</div></div><span class="badge b-green">Weekend</span></div>'+
   '<div class="s-sec">'+sHead('Opening','#c8a94a')+sRow('Opening Song',w.song1)+sRow('Chairman',w.chairman)+sRow('Opening Prayer',w.prayOpen)+'</div>'+
-  '<div class="s-sec">'+sHead('Public Talk','#1b2d4f')+sRow('Title',w.talkTitle)+sRow('Speaker',w.speaker)+'</div>'+
-  '<div class="s-sec">'+sHead('Watchtower Study','#3d7a52')+sRow('Article',w.wtTitle)+sRow('Conductor',w.wtCond)+sRow('Reader',w.wtRead)+(w.song2?sRow('Closing Song',w.song2):'')+sRow('Closing Prayer',w.prayClose)+'</div></div>';
+  '<div class="s-sec">'+sHead('Public Talk','#1b2d4f')+sRow('Title',w.talkTitle)+sRow('Speaker',w.speaker)+(w.song2?sRow('&#127929; Song After Talk',w.song2):'')+'</div>'+
+  '<div class="s-sec">'+sHead('Watchtower Study','#3d7a52')+(w.song3?sRow('&#127929; WT Opening Song',w.song3):'')+sRow('Article',w.wtTitle)+sRow('Conductor',w.wtCond)+sRow('Reader',w.wtRead)+sRow('Opening Prayer',w.wtPrayOpen)+(w.song4?sRow('&#127929; WT Closing Song',w.song4):'')+sRow('Closing Prayer',w.prayClose)+'</div></div>';
 }
 function buildFSMCard(f){
   var grp=groupById(f.group),gn=f.group==='All'?'All Groups':(grp?grp.name:'');
@@ -1010,7 +1018,12 @@ function renderAdmHome(){
     if(admPart)admPart.style.display='none';
     if(admZoom)admZoom.style.display='none';
   }
-  var mRpts=reports.filter(function(r){return r.month===mk;});
+  var myGrps=[];
+  if(currentUser&&currentUser.id!=='admin1'){
+    groups.forEach(function(g){if(g.overseer&&g.overseer.toLowerCase()===currentUser.name.toLowerCase())myGrps.push(g.id);});
+  }
+  var visRpts=myGrps.length>0?reports.filter(function(r){return myGrps.indexOf(r.gid)>=0;}):reports;
+  var mRpts=visRpts.filter(function(r){return r.month===mk;});
   document.getElementById('st-pub').textContent=publishers.filter(function(p){return p.id!=='admin1';}).length;
   document.getElementById('st-rpt').textContent=mRpts.length;
   document.getElementById('st-hrs').textContent=mRpts.reduce(function(s,r){return s+r.hours;},0).toFixed(1);
@@ -1021,13 +1034,21 @@ function renderAdmHome(){
 }
 function renderAdmReports(){
   var mk=new Date().toISOString().slice(0,7),months=[];
-  reports.forEach(function(r){if(months.indexOf(r.month)<0)months.push(r.month);});
+  // Filter reports by groups the current admin oversees (unless main admin)
+  var myGroups=[];
+  if(currentUser&&currentUser.id!=='admin1'){
+    groups.forEach(function(g){
+      if(g.overseer&&g.overseer.toLowerCase()===currentUser.name.toLowerCase())myGroups.push(g.id);
+    });
+  }
+  var allReports=myGroups.length>0?reports.filter(function(r){return myGroups.indexOf(r.gid)>=0;}):reports;
+  allReports.forEach(function(r){if(months.indexOf(r.month)<0)months.push(r.month);});
   months.sort().reverse();
   var sel=document.getElementById('fil-month'),curVal=sel.value;
   sel.innerHTML='<option value="">All Months</option>';
   months.forEach(function(m){var o=document.createElement('option');o.value=m;o.textContent=fmtMonth(m);if(m===mk||m===curVal)o.selected=true;sel.appendChild(o);});
   var mf=gv('fil-month'),gf=gv('fil-group');
-  var list=reports.filter(function(r){return(!mf||r.month===mf)&&(!gf||r.gid===gf);});
+  var list=allReports.filter(function(r){return(!mf||r.month===mf)&&(!gf||r.gid===gf);});
   var el=document.getElementById('adm-rpt-table');
   if(!list.length){el.innerHTML='<div class="empty"><div class="empty-icon">&#128203;</div>No reports found.</div>';return;}
   var totH=0,totRV=0,totBS=0,totPl=0;
@@ -1109,7 +1130,7 @@ function delMW(id){midweeks=midweeks.filter(function(m){return m.id!==id;});save
 function renderAdmMW(){var el=document.getElementById('adm-mw-list');if(!el)return;var list=midweeks.slice().sort(function(a,b){return b.date.localeCompare(a.date);});el.innerHTML=list.length?list.map(function(m){return'<div style="position:relative">'+buildMWCard(m)+'<button class="xdel" style="position:absolute;top:14px;right:14px" onclick="delMW(\''+m.id+'\')">Remove</button></div>';}).join(''):'<div class="empty"><div class="empty-icon">&#128214;</div>No midweek schedules yet.</div>';}
 function saveWK(){
   var date=gv('wk-date');if(!date){toast('Select a date.');return;}
-  var rec={id:'wk'+uid(),date:date,time:gv('wk-time'),song1:gv('wk-song1'),song2:gv('wk-song2'),chairman:gv('wk-chairman'),prayOpen:gv('wk-pray-open'),prayClose:gv('wk-pray-close'),talkTitle:gv('wk-talk-title'),speaker:gv('wk-speaker'),wtTitle:gv('wk-wt-title'),wtCond:gv('wk-wt-cond'),wtRead:gv('wk-wt-read')};
+  var rec={id:'wk'+uid(),date:date,time:gv('wk-time'),song1:gv('wk-song1'),song2:gv('wk-song2'),song3:gv('wk-song3'),song4:gv('wk-song4'),chairman:gv('wk-chairman'),prayOpen:gv('wk-pray-open'),prayClose:gv('wk-pray-close'),talkTitle:gv('wk-talk-title'),speaker:gv('wk-speaker'),wtTitle:gv('wk-wt-title'),wtCond:gv('wk-wt-cond'),wtRead:gv('wk-wt-read'),wtPrayOpen:gv('wk-wt-pray-open')};
   weekends.push(rec);saveAll();renderAdmWK();renderPubWK();closeM('m-wk');toast('Weekend schedule saved!');
 }
 function delWK(id){weekends=weekends.filter(function(w){return w.id!==id;});saveAll();renderAdmWK();renderPubWK();toast('Removed.');}
