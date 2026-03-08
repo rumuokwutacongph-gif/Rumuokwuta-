@@ -637,8 +637,9 @@ document.addEventListener('visibilitychange',function(){
     pullFromCloud(function(ch){
       if(!ch)return;
       try{
-        if(currentUser.isAdmin){renderAdmHome();renderAdmMW();renderAdmWK();}
-        else{renderPubHome();renderPubMW();renderPubWK();}
+        if(currentUser.isAdmin){renderAdmHome();renderAdmReports();renderPubs();renderAdmMW();renderAdmWK();renderAdmFSM();}
+        else{renderPubHome();renderPubMW();renderPubWK();renderPubFSM();}
+        updateBadge();
       }catch(e){}
     });
   }
@@ -735,9 +736,15 @@ function doRegister(){
   }
   var newPub={id:'p'+uid(),name:name,pin:pin,group:grp,role:'publisher',isAdmin:false};
   publishers.push(newPub);
-  saveAll();
-  pushToCloud(); // immediate push so other devices see new publisher
+  lcSet('publishers', publishers);  // save locally first
   currentUser=newPub;
+  // Push immediately to cloud so admin sees new publisher right away
+  fbWrite({groups:groups,publishers:publishers,reports:reports,
+    midweeks:midweeks,weekends:weekends,fsms:fsms,zoomInfo:zoomInfo,_ts:Date.now()},
+    function(err){
+      if(!err) setSyncStatus('ok');
+    }
+  );
   launchPublisher();
 }
 function showLogin(role){
@@ -900,7 +907,14 @@ function submitReport(){
   var rec={id:'r'+uid(),pid:currentUser.id,pname:currentUser.name,gid:grp,month:month,hours:parseFloat(document.getElementById('rpt-hours').value)||0,rv:parseInt(document.getElementById('rpt-rv').value)||0,bs:parseInt(document.getElementById('rpt-bs').value)||0,placements:parseInt(document.getElementById('rpt-placements').value)||0,notes:gv('rpt-notes'),submitted:new Date().toLocaleDateString()};
   var found=false;for(var i=0;i<reports.length;i++){if(reports[i].pid===currentUser.id&&reports[i].month===month){reports[i]=rec;found=true;break;}}
   if(!found)reports.push(rec);
-  saveAll();toast('Report submitted!');renderPubHome();
+  lcSet('reports',reports);
+  // Push immediately so admin sees report right away
+  fbWrite({groups:groups,publishers:publishers,reports:reports,
+    midweeks:midweeks,weekends:weekends,fsms:fsms,zoomInfo:zoomInfo,_ts:Date.now()},
+    function(err){setSyncStatus(err?'error':'ok');}
+  );
+  toast('Report submitted! ✅ Syncing to admin...');
+  renderPubHome();
 }
 
 function renderPubMW(){var el=document.getElementById('pub-mw-list');var list=midweeks.slice().sort(function(a,b){return b.date.localeCompare(a.date);});el.innerHTML=list.length?list.map(buildMWCard).join(''):'<div class="empty"><div class="empty-icon">&#128214;</div>No midweek schedules yet.</div>';}
@@ -914,7 +928,7 @@ function buildMWCard(m){
   if(m.p3Type||m.p3Student){var lb=(m.p3Type||'Part 3')+(m.p3Theme?' - '+m.p3Theme:'');var vl=[];if(m.p3Student)vl.push('<strong>Student:</strong> '+m.p3Student);if(m.p3Asst)vl.push('<strong>Asst:</strong> '+m.p3Asst);p3=sRow(lb,vl.join(' &nbsp;|&nbsp; '));}
   if(m.p4Type||m.p4Student){var lb=(m.p4Type||'Part 4')+(m.p4Theme?' - '+m.p4Theme:'');var vl=[];if(m.p4Student)vl.push('<strong>Student:</strong> '+m.p4Student);if(m.p4Asst)vl.push('<strong>Asst:</strong> '+m.p4Asst);p4=sRow(lb,vl.join(' &nbsp;|&nbsp; '));}
   var lac2=(m.lac2Title||m.lac2Who)?sRow(m.lac2Title||'Part 2',m.lac2Who):'';
-  return'<div class="sched-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:7px;margin-bottom:14px"><div><div style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:700;color:var(--navy)">Week of '+fmtDate(m.date)+'</div><div style="font-size:13px;color:var(--muted);margin-top:2px">'+fmtTime(m.time)+'</div></div><span class="badge b-navy">Midweek</span></div>'+
+  return'<div class="sched-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:7px;margin-bottom:14px"><div><div style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:700;color:var(--navy)">Week of '+fmtDate(m.date)+'</div><div style="font-size:13px;color:var(--muted);margin-top:2px">'+fmtTime(m.time)+(m.chairman?' &middot; Chairman: <strong>'+m.chairman+'</strong>':'')+'</div></div><span class="badge b-navy">Midweek</span></div>'+
   '<div class="s-sec">'+sHead('Opening','#c8a94a')+sRow('Opening Song',m.song1)+sRow('Chairman',m.chairman)+sRow('Opening Prayer',m.prayOpen)+'</div>'+
   '<div class="s-sec">'+sHead('1 - Treasures From God\'s Word','#1b2d4f')+sRow('Talk (10 min)',(m.talk||'')+(m.talkWho?' - '+m.talkWho:''))+sRow('Spiritual Gems (10 min)',m.gemsWho)+sRow('Bible Reading (4 min)',m.bibleRead)+'</div>'+
   '<div class="s-sec">'+sHead('2 - Apply Yourself to the Field Ministry','#3d7a52')+p1+p2+p3+p4+'</div>'+
@@ -1123,7 +1137,7 @@ function renderGroups(){
 }
 function saveMW(){
   var date=gv('mw-date');if(!date){toast('Select a date.');return;}
-  var rec={id:'mw'+uid(),date:date,time:gv('mw-time'),song1:gv('mw-song1'),song2:gv('mw-song2'),song3:gv('mw-song3'),chairman:gv('mw-chairman'),prayOpen:gv('mw-pray-open'),prayClose:gv('mw-pray-close'),talk:gv('mw-talk'),talkWho:gv('mw-talk-who'),gemsWho:gv('mw-gems-who'),bibleRead:gv('mw-bible-read'),p1Type:gv('mw-p1-type'),p1Theme:gv('mw-p1-theme'),p1Student:gv('mw-p1-student'),p1Asst:gv('mw-p1-asst'),p2Type:gv('mw-p2-type'),p2Theme:gv('mw-p2-theme'),p2Student:gv('mw-p2-student'),p2Asst:gv('mw-p2-asst'),p3Type:gv('mw-p3-type'),p3Theme:gv('mw-p3-theme'),p3Student:gv('mw-p3-student'),p3Asst:gv('mw-p3-asst'),p4Type:gv('mw-p4-type'),p4Theme:gv('mw-p4-theme'),p4Student:gv('mw-p4-student'),p4Asst:gv('mw-p4-asst'),lac1Title:gv('mw-lac1-title'),lac1Who:gv('mw-lac1-who'),lac2Title:gv('mw-lac2-title'),lac2Who:gv('mw-lac2-who'),cbsCond:gv('mw-cbs-cond'),cbsRead:gv('mw-cbs-read')};
+  var rec={id:'mw'+uid(),date:date,time:gv('mw-time'),song1:gv('mw-song1'),song2:gv('mw-song2'),song3:gv('mw-song3'),chairman:gv('mw-chairman'),prayOpen:gv('mw-pray-open'),prayClose:gv('mw-pray-close'),talk:gv('mw-talk'),talkWho:gv('mw-talk-who'),gemsWho:gv('mw-gems-who'),bibleRead:gv('mw-bible-read'),p1Type:gv('mw-p1-type'),p1Theme:gv('mw-p1-theme'),p1Student:gv('mw-p1-stu'),p1Asst:gv('mw-p1-asst'),p2Type:gv('mw-p2-type'),p2Theme:gv('mw-p2-theme'),p2Student:gv('mw-p2-stu'),p2Asst:gv('mw-p2-asst'),p3Type:gv('mw-p3-type'),p3Theme:gv('mw-p3-theme'),p3Student:gv('mw-p3-stu'),p3Asst:gv('mw-p3-asst'),p4Type:gv('mw-p4-type'),p4Theme:gv('mw-p4-theme'),p4Student:gv('mw-p4-stu'),p4Asst:gv('mw-p4-asst'),lac1Title:gv('mw-lac1-title'),lac1Who:gv('mw-lac1-who'),lac2Title:gv('mw-lac2-title'),lac2Who:gv('mw-lac2-who'),cbsCond:gv('mw-cbs-cond'),cbsRead:gv('mw-cbs-read')};
   midweeks.push(rec);saveAll();renderAdmMW();renderPubMW();closeM('m-mw');toast('Midweek schedule saved!');
 }
 function delMW(id){midweeks=midweeks.filter(function(m){return m.id!==id;});saveAll();renderAdmMW();renderPubMW();toast('Removed.');}
