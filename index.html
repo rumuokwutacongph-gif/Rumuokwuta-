@@ -426,7 +426,7 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
   <div class="modal-box" style="max-width:520px">
     <div class="modal-title">Add Midweek Schedule</div>
     <div class="row2"><div class="fi"><label>Date</label><input type="date" id="mw-date"></div><div class="fi"><label>Time</label><input type="time" id="mw-time" value="19:00"></div></div>
-    <div class="row2"><div class="fi"><label>Chairman</label><input type="text" id="mw-chair" list="pub-list-dl"></div><div class="fi"><label>Opening Prayer</label><input type="text" id="mw-pray-open" list="pub-list-dl"></div></div>
+    <div class="row2"><div class="fi"><label>Chairman</label><input type="text" id="mw-chairman" list="pub-list-dl"></div><div class="fi"><label>Opening Prayer</label><input type="text" id="mw-pray-open" list="pub-list-dl"></div></div>
     <div class="row2"><div class="fi"><label>Opening Song #</label><input type="text" id="mw-song1"></div><div class="fi"><label>Middle Song #</label><input type="text" id="mw-song2"></div></div>
     <div style="font-weight:700;font-size:12px;color:var(--navy);text-transform:uppercase;margin:12px 0 8px">Treasures</div>
     <div class="row3"><div class="fi"><label>Talk (10 min)</label><input type="text" id="mw-talk"></div><div class="fi"><label>Speaker</label><input type="text" id="mw-talk-who" list="pub-list-dl"></div><div class="fi"><label>Gems (10 min)</label><input type="text" id="mw-gems-who" list="pub-list-dl"></div></div>
@@ -587,6 +587,20 @@ function pushToCloud(){
     function(err){setSyncStatus(err?'error':'ok');});
 }
 
+function migrateMWRecords(){
+  // Fix old records where p1Student was empty due to wrong field ID
+  // Old code read mw-p1-student but modal had mw-p1-stu, so student was never saved
+  midweeks.forEach(function(m){
+    ['p1','p2','p3','p4'].forEach(function(p){
+      var stKey=p+'Student', aKey=p+'Asst';
+      // If student empty but asst has value without "Asst:" prefix issue, swap
+      if(!m[stKey]&&m[aKey]){
+        m[stKey]=m[aKey];
+        m[aKey]='';
+      }
+    });
+  });
+}
 function pullFromCloud(onDone){
   if(!SYNC_READY){setSyncStatus('nokey');if(onDone)onDone(false);return;}
   setSyncStatus('syncing');
@@ -1359,6 +1373,7 @@ function connectPubFirebase(){
           if(data[k]&&Array.isArray(data[k])&&data[k].length>0){window[k]=data[k];lcSet(k,data[k]);}
         });
         if(data.zoomInfo){zoomInfo=data.zoomInfo;lcSet('zoomInfo',zoomInfo);}
+      migrateMWRecords();
       }
       res.textContent='✅ Connected!';res.style.color='#4caf50';
       setSyncStatus('ok');startAutoSync();
