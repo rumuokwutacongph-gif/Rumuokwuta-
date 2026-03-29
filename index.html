@@ -1664,14 +1664,14 @@ function renderExcelPreview(){
   // Midweek preview
   var mwEl=document.getElementById('xl-preview-mw');
   if(_xlParsedMW.length){
-    mwEl.innerHTML='<div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--navy);margin:14px 0 10px">&#128218; Midweek ('+_xlParsedMW.length+' weeks)</div>'+_xlParsedMW.map(buildMWCard).join('');
+    mwEl.innerHTML='<div style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:700;color:var(--navy);margin:14px 0 10px">&#128218; Midweek ('+_xlParsedMW.length+' weeks)</div>'+_xlParsedMW.map(buildMWCard).join('');
   } else {
     mwEl.innerHTML='<div class="card" style="color:var(--muted)">No midweek data found. Check sheet name contains "Mid" or "Week".</div>';
   }
   // Weekend preview
   var wkEl=document.getElementById('xl-preview-wk');
   if(_xlParsedWK.length){
-    wkEl.innerHTML='<div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--navy);margin:14px 0 10px">&#127908; Weekend ('+_xlParsedWK.length+' weeks)</div>'+_xlParsedWK.map(buildWKCard).join('');
+    wkEl.innerHTML='<div style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:700;color:var(--navy);margin:14px 0 10px">&#127908; Weekend ('+_xlParsedWK.length+' weeks)</div>'+_xlParsedWK.map(buildWKCard).join('');
   } else {
     wkEl.innerHTML='<div class="card" style="color:var(--muted)">No weekend data found. Check sheet name contains "Weekend" or "WK".</div>';
   }
@@ -1768,7 +1768,7 @@ function buildPrintMWCard(m){
     '<div class="p-date">Week of '+fmtDate(m.date)+'</div>'+
     '<div class="p-time">'+fmtTime(m.time)+'</div>'+
     '<div class="p-sec"><div class="p-sec-hd gold">Opening</div>'+pRow('Opening Song',m.song1)+pRow('Chairman',m.chairman)+pRow('Opening Prayer',m.prayOpen)+'</div>'+
-    '<div class="p-sec"><div class="p-sec-hd">1 — Treasures from God's Word</div>'+pRow('Talk',m.talk+(m.talkWho?' — '+m.talkWho:''))+pRow('Spiritual Gems',m.gemsWho)+pRow('Bible Reading',m.bibleRead)+'</div>'+
+    '<div class="p-sec"><div class="p-sec-hd">1 — Treasures from God\'s Word</div>'+pRow('Talk',m.talk+(m.talkWho?' — '+m.talkWho:''))+pRow('Spiritual Gems',m.gemsWho)+pRow('Bible Reading',m.bibleRead)+'</div>'+
     '<div class="p-sec"><div class="p-sec-hd green">2 — Apply Yourself to the Field Ministry</div>'+p1+p2+p3+p4+'</div>'+
     (m.song2?'<div class="p-sec">'+pRow('Middle Song',m.song2)+'</div>':'')+
     '<div class="p-sec"><div class="p-sec-hd brown">3 — Living as Christians</div>'+
