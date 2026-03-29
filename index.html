@@ -9,6 +9,7 @@
 <title>Rumuokwuta Ministry Assistant</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#1b2d4f;--navy2:#243860;--gold:#c8a94a;--gold2:#e8c96a;--cream:#f5f0e8;--soft:#e4ddd0;--green:#3d7a52;--red:#883333;--muted:#7a7060;--border:rgba(200,190,170,0.5);}
@@ -104,6 +105,12 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
 .pub-acts{display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
 .grp-hdr{background:var(--navy);color:#fff;padding:10px 14px;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:space-between;}
 .grp-body{background:#fff;border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;padding:10px;margin-bottom:16px;}
+@media print{
+  body *{visibility:hidden}
+  #print-area,#print-area *{visibility:visible}
+  #print-area{position:fixed;top:0;left:0;width:100%;padding:20px;font-family:Arial,sans-serif;}
+  .no-print{display:none!important}
+}
 .np-bd{display:none;position:fixed;inset:0;z-index:199;}.np-bd.open{display:block;}
 .np-panel{display:none;position:fixed;top:58px;right:0;width:310px;max-width:100vw;height:calc(100vh - 58px);background:#fff;z-index:200;box-shadow:-4px 0 24px rgba(0,0,0,0.13);flex-direction:column;overflow:hidden;}
 .np-panel.open{display:flex;}
@@ -292,6 +299,7 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
     <button class="nav-btn" onclick="admNav(this,'at-fsm')">Field Service</button>
     <button class="nav-btn" onclick="admNav(this,'at-groups')">Groups</button>
     <button class="nav-btn" onclick="admNav(this,'at-data')">&#128190; Data</button>
+    <button class="nav-btn" onclick="admNav(this,'at-import');initImportTab()">&#128194; Import</button>
   </nav>
   <div class="page">
     <!-- DASHBOARD -->
@@ -344,6 +352,49 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
       <div class="page-head"><div class="section-title">Groups</div></div>
       <div id="grp-list"></div>
     </div>
+    <!-- IMPORT -->
+    <div id="at-import" style="display:none">
+      <div class="page-head"><div class="section-title">&#128214; Import from Excel</div></div>
+
+      <!-- Upload card -->
+      <div class="card" style="border-left:4px solid var(--gold)">
+        <div class="card-title">&#128194; Upload Schedule File (.xlsx)</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7">
+          Upload your Excel file with <strong>Midweek</strong> and <strong>Weekend</strong> sheets.<br>
+          The app will read both sheets, display a preview, and let you save to Firebase.
+        </p>
+        <div class="fi">
+          <input type="file" id="xl-file-input" accept=".xlsx,.xls" style="background:#fff;border:2px dashed var(--gold);padding:16px;border-radius:10px;cursor:pointer;font-size:14px;">
+        </div>
+        <button class="btn btn-gold" style="margin-top:6px" onclick="parseExcelFile()">&#128269; Read File</button>
+        <span id="xl-status" style="font-size:12px;font-weight:700;margin-left:12px;color:var(--navy)"></span>
+      </div>
+
+      <!-- Column mapping hint -->
+      <div class="card" style="border-left:4px solid #888;display:none" id="xl-mapping-hint">
+        <div class="card-title" style="font-size:14px">&#128203; How to format your Excel sheets</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.9">
+          <strong style="color:var(--navy)">Midweek sheet</strong> — expected columns (row 1 = headers):<br>
+          <code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:11px">Date | Time | Chairman | Opening Prayer | Opening Song | Talk | Talk Speaker | Spiritual Gems | Bible Reading | Middle Song | Part1 Type | Part1 Assistant | Part2 Type | Part2 Assistant | Part3 Type | Part3 Assistant | Part4 Type | Part4 Assistant | LAC Part1 Title | LAC Part1 Speaker | LAC Part2 Title | LAC Part2 Speaker | CBS Conductor | CBS Reader | Closing Song | Closing Prayer</code><br><br>
+          <strong style="color:var(--navy)">Weekend sheet</strong> — expected columns:<br>
+          <code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:11px">Date | Time | Chairman | Opening Prayer | Opening Song | Talk Title | Speaker | WT Opening Song | WT Article | WT Conductor | WT Reader | WT Closing Song | Closing Prayer</code>
+        </div>
+      </div>
+
+      <!-- Preview area -->
+      <div id="xl-preview-area" style="display:none">
+        <div class="page-head" style="margin-top:8px">
+          <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy)">Preview</div>
+          <div style="display:flex;gap:9px">
+            <button class="btn btn-gold" onclick="importAllToApp()">&#128190; Save All to App &amp; Sync</button>
+            <button class="btn btn-outline" onclick="printSchedulePreview()">&#128424; Print</button>
+          </div>
+        </div>
+        <div id="xl-preview-mw"></div>
+        <div id="xl-preview-wk"></div>
+      </div>
+    </div>
+
     <!-- DATA -->
     <div id="at-data" style="display:none">
       <div class="page-head"><div class="section-title">Data &amp; Sync</div></div>
@@ -980,7 +1031,7 @@ function launchAdmin(){
   setTimeout(checkReminders,2000);
 }
 function admNav(btn,tid){
-  ['at-home','at-reports','at-publishers','at-midweek','at-weekend','at-fsm','at-groups','at-data'].forEach(function(t){document.getElementById(t).style.display='none';});
+  ['at-home','at-reports','at-publishers','at-midweek','at-weekend','at-fsm','at-groups','at-data','at-import'].forEach(function(t){document.getElementById(t).style.display='none';});
   document.getElementById(tid).style.display='block';
   document.querySelectorAll('#screen-admin .nav-btn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
@@ -1463,6 +1514,279 @@ function renderStorageInfo(){
   var total=keys.reduce(function(s,k){return s+new Blob([localStorage.getItem('cma_'+k)||'']).size;},0);
   el.innerHTML=rows.join('')+'<div style="margin-top:9px;font-weight:700;color:var(--navy)">Total stored: ~'+Math.round(total/1024*10)/10+' KB</div>';
   updateFBStatusLine();
+}
+
+
+// ============================================================
+// EXCEL IMPORT
+// ============================================================
+var _xlParsedMW=[], _xlParsedWK=[];
+
+function initImportTab(){
+  document.getElementById('xl-mapping-hint').style.display='block';
+}
+
+function parseExcelFile(){
+  var inp=document.getElementById('xl-file-input');
+  var status=document.getElementById('xl-status');
+  if(!inp.files||!inp.files[0]){status.textContent='⚠️ Please select a file first.';status.style.color='#e53935';return;}
+  status.textContent='Reading file…';status.style.color='var(--navy)';
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=new Uint8Array(e.target.result);
+      var wb=XLSX.read(data,{type:'array',cellDates:true});
+      // Find midweek and weekend sheets (flexible matching)
+      var mwSheet=null,wkSheet=null;
+      wb.SheetNames.forEach(function(n){
+        var nl=n.toLowerCase();
+        if(!mwSheet&&(nl.indexOf('mid')>=0||nl.indexOf('week')>=0&&nl.indexOf('end')<0))mwSheet=wb.Sheets[n];
+        if(!wkSheet&&(nl.indexOf('weekend')>=0||nl.indexOf('wk')>=0||nl.indexOf('sunday')>=0||nl.indexOf('public')>=0))wkSheet=wb.Sheets[n];
+      });
+      // Fallback: first sheet = midweek, second = weekend
+      if(!mwSheet&&wb.SheetNames.length>0)mwSheet=wb.Sheets[wb.SheetNames[0]];
+      if(!wkSheet&&wb.SheetNames.length>1)wkSheet=wb.Sheets[wb.SheetNames[1]];
+
+      _xlParsedMW=mwSheet?parseMWSheet(mwSheet):[];
+      _xlParsedWK=wkSheet?parseWKSheet(wkSheet):[];
+
+      status.textContent='✅ Read '+_xlParsedMW.length+' midweek + '+_xlParsedWK.length+' weekend records.';
+      status.style.color='#4caf50';
+      renderExcelPreview();
+    }catch(err){
+      status.textContent='❌ Error: '+err.message;status.style.color='#e53935';
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(inp.files[0]);
+}
+
+function xlCellVal(row,possibleKeys){
+  for(var i=0;i<possibleKeys.length;i++){
+    var k=possibleKeys[i];
+    // Try exact, lowercase, and partial match
+    for(var key in row){
+      if(key.toLowerCase().replace(/[^a-z0-9]/g,'')===k.toLowerCase().replace(/[^a-z0-9]/g,'')){
+        var v=row[key];
+        if(v!==undefined&&v!==null&&String(v).trim()!=='')return String(v).trim();
+      }
+    }
+  }
+  return '';
+}
+
+function xlDate(row){
+  // Try common date column names
+  var keys=['date','week','weekof','meetingdate'];
+  for(var i=0;i<keys.length;i++){
+    for(var k in row){
+      if(k.toLowerCase().replace(/[^a-z]/g,'')===keys[i]){
+        var v=row[k];
+        if(!v)continue;
+        if(v instanceof Date){return v.toISOString().split('T')[0];}
+        // Excel serial number
+        if(typeof v==='number'){
+          var d=new Date(Math.round((v-25569)*86400*1000));
+          return d.toISOString().split('T')[0];
+        }
+        var s=String(v).trim();
+        // Try parse various date formats
+        var m=s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})$/);
+        if(m){var yr=m[3].length===2?'20'+m[3]:m[3];return yr+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');}
+        var d2=new Date(s);
+        if(!isNaN(d2.getTime()))return d2.toISOString().split('T')[0];
+      }
+    }
+  }
+  return '';
+}
+
+function parseMWSheet(sheet){
+  var rows=XLSX.utils.sheet_to_json(sheet,{defval:''});
+  return rows.map(function(r){
+    var dt=xlDate(r);
+    if(!dt)return null;
+    return{
+      id:'mw'+uid(),date:dt,
+      time:xlCellVal(r,['time','meetingtime'])||'19:00',
+      chairman:xlCellVal(r,['chairman','chair']),
+      prayOpen:xlCellVal(r,['openingprayer','prayopen','openpray']),
+      song1:xlCellVal(r,['openingsong','song1','openingsong#','opensong']),
+      talk:xlCellVal(r,['talk','talktitle','talktheme']),
+      talkWho:xlCellVal(r,['talkspeaker','speaker','talkwho','talkby']),
+      gemsWho:xlCellVal(r,['spiritualgems','gems','gemsspeaker','gemswho']),
+      bibleRead:xlCellVal(r,['biblereading','biblereader','biblread']),
+      song2:xlCellVal(r,['middlesong','song2','midsong','middlesong#']),
+      p1Type:xlCellVal(r,['part1type','p1type','part1','parttype1']),
+      p1Asst:xlCellVal(r,['part1assistant','p1asst','p1assistant','part1asst']),
+      p2Type:xlCellVal(r,['part2type','p2type','part2','parttype2']),
+      p2Asst:xlCellVal(r,['part2assistant','p2asst','p2assistant','part2asst']),
+      p3Type:xlCellVal(r,['part3type','p3type','part3','parttype3']),
+      p3Asst:xlCellVal(r,['part3assistant','p3asst','p3assistant','part3asst']),
+      p4Type:xlCellVal(r,['part4type','p4type','part4','parttype4']),
+      p4Asst:xlCellVal(r,['part4assistant','p4asst','p4assistant','part4asst']),
+      lac1Title:xlCellVal(r,['lacpart1title','lac1title','lacpart1','lac1','livingaschristians1','lc1title']),
+      lac1Who:xlCellVal(r,['lacpart1speaker','lac1speaker','lac1who','lc1speaker']),
+      lac2Title:xlCellVal(r,['lacpart2title','lac2title','lacpart2','lac2','livingaschristians2','lc2title']),
+      lac2Who:xlCellVal(r,['lacpart2speaker','lac2speaker','lac2who','lc2speaker']),
+      cbsCond:xlCellVal(r,['cbsconductor','cbscond','congregationbiblestudy','cbsspeaker']),
+      cbsRead:xlCellVal(r,['cbsreader','cbsread']),
+      song3:xlCellVal(r,['closingsong','song3','closingsong#']),
+      prayClose:xlCellVal(r,['closingprayer','prayclose','closepray'])
+    };
+  }).filter(function(r){return r&&r.date;});
+}
+
+function parseWKSheet(sheet){
+  var rows=XLSX.utils.sheet_to_json(sheet,{defval:''});
+  return rows.map(function(r){
+    var dt=xlDate(r);
+    if(!dt)return null;
+    return{
+      id:'wk'+uid(),date:dt,
+      time:xlCellVal(r,['time','meetingtime'])||'10:00',
+      chairman:xlCellVal(r,['chairman','chair']),
+      prayOpen:xlCellVal(r,['openingprayer','prayopen','openpray']),
+      song1:xlCellVal(r,['openingsong','song1','opensong','openingsong#']),
+      talkTitle:xlCellVal(r,['talktitle','talk','publictalk','talktopic']),
+      speaker:xlCellVal(r,['speaker','talkspeaker','publicspeaker','talkby']),
+      song2:xlCellVal(r,['wtopeningsong','song2','wtsong1','watchtoweropeningsong','wtopeningsong#']),
+      wtTitle:xlCellVal(r,['wtarticle','wttitle','watchtowerarticle','wtarticletitle']),
+      wtCond:xlCellVal(r,['wtconductor','watchtowerconductor','wtcond']),
+      wtRead:xlCellVal(r,['wtreader','watchtowerreader','wtread']),
+      song3:xlCellVal(r,['wtclosingsong','song3','wtsong2','watchowerclosingsong','wtclosingsong#']),
+      prayClose:xlCellVal(r,['closingprayer','prayclose','closepray'])
+    };
+  }).filter(function(r){return r&&r.date;});
+}
+
+function renderExcelPreview(){
+  var area=document.getElementById('xl-preview-area');
+  area.style.display='block';
+  // Midweek preview
+  var mwEl=document.getElementById('xl-preview-mw');
+  if(_xlParsedMW.length){
+    mwEl.innerHTML='<div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--navy);margin:14px 0 10px">&#128218; Midweek ('+_xlParsedMW.length+' weeks)</div>'+_xlParsedMW.map(buildMWCard).join('');
+  } else {
+    mwEl.innerHTML='<div class="card" style="color:var(--muted)">No midweek data found. Check sheet name contains "Mid" or "Week".</div>';
+  }
+  // Weekend preview
+  var wkEl=document.getElementById('xl-preview-wk');
+  if(_xlParsedWK.length){
+    wkEl.innerHTML='<div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--navy);margin:14px 0 10px">&#127908; Weekend ('+_xlParsedWK.length+' weeks)</div>'+_xlParsedWK.map(buildWKCard).join('');
+  } else {
+    wkEl.innerHTML='<div class="card" style="color:var(--muted)">No weekend data found. Check sheet name contains "Weekend" or "WK".</div>';
+  }
+}
+
+function importAllToApp(){
+  var added=0;
+  _xlParsedMW.forEach(function(rec){
+    // Skip duplicates (same date)
+    var exists=midweeks.some(function(m){return m.date===rec.date;});
+    if(!exists){midweeks.push(rec);added++;}
+  });
+  _xlParsedWK.forEach(function(rec){
+    var exists=weekends.some(function(w){return w.date===rec.date;});
+    if(!exists){weekends.push(rec);added++;}
+  });
+  saveAll();
+  renderAdmMW();renderAdmWK();renderPubMW();renderPubWK();
+  toast('✅ '+added+' records saved & syncing to Firebase!');
+  document.getElementById('xl-status').textContent='✅ Saved '+added+' records to app!';
+  document.getElementById('xl-status').style.color='#4caf50';
+}
+
+function printSchedulePreview(){
+  // Build a clean print-friendly page
+  var html='<div id="print-area" style="font-family:Arial,sans-serif;max-width:800px;margin:0 auto">';
+  html+='<div style="text-align:center;margin-bottom:24px;border-bottom:2px solid #1b2d4f;padding-bottom:12px">';
+  html+='<div style="font-size:22px;font-weight:800;color:#1b2d4f">Rumuokwuta Congregation</div>';
+  html+='<div style="font-size:14px;color:#666;margin-top:4px">Meeting Schedule — Printed '+new Date().toLocaleDateString('en',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</div>';
+  html+='</div>';
+
+  if(_xlParsedMW.length){
+    html+='<div style="font-size:16px;font-weight:800;color:#1b2d4f;margin:18px 0 10px;text-transform:uppercase;letter-spacing:1px">Midweek Meeting Schedule</div>';
+    _xlParsedMW.forEach(function(m){
+      html+=buildPrintMWCard(m);
+    });
+  }
+  if(_xlParsedWK.length){
+    html+='<div style="font-size:16px;font-weight:800;color:#1b2d4f;margin:24px 0 10px;text-transform:uppercase;letter-spacing:1px;page-break-before:auto">Weekend Meeting Schedule</div>';
+    _xlParsedWK.forEach(function(w){
+      html+=buildPrintWKCard(w);
+    });
+  }
+  html+='</div>';
+
+  var win=window.open('','_blank','width=900,height=700');
+  win.document.write('<!DOCTYPE html><html><head><title>Schedule — Rumuokwuta Congregation</title><style>'+
+    'body{font-family:Arial,sans-serif;margin:20px;color:#1e1e1e}'+
+    '.p-card{border:1px solid #ccc;border-radius:8px;padding:14px;margin-bottom:16px;page-break-inside:avoid}'+
+    '.p-date{font-size:16px;font-weight:800;color:#1b2d4f;margin-bottom:2px}'+
+    '.p-time{font-size:12px;color:#888;margin-bottom:10px}'+
+    '.p-sec{margin-bottom:10px}'+
+    '.p-sec-hd{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;background:#1b2d4f;padding:4px 9px;border-radius:4px;display:inline-block;margin-bottom:6px}'+
+    '.p-sec-hd.gold{background:#c8a94a;color:#1b2d4f}'+
+    '.p-sec-hd.green{background:#3d7a52}'+
+    '.p-sec-hd.brown{background:#5a4a2a}'+
+    '.p-row{display:flex;gap:8px;padding:3px 0;border-bottom:1px solid #eee;font-size:13px}'+
+    '.p-row:last-child{border-bottom:none}'+
+    '.p-lbl{min-width:170px;color:#666;flex-shrink:0}'+
+    '.p-val{font-weight:700}'+
+    '@media print{body{margin:10px}.p-card{page-break-inside:avoid}}'+
+  '</style></head><body>'+
+    '<div style="text-align:center;margin-bottom:24px;border-bottom:2px solid #1b2d4f;padding-bottom:12px">'+
+    '<div style="font-size:22px;font-weight:800;color:#1b2d4f">Rumuokwuta Congregation</div>'+
+    '<div style="font-size:13px;color:#666;margin-top:4px">Meeting Schedule &mdash; Printed '+new Date().toLocaleDateString('en',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</div>'+
+    '</div>');
+
+  if(_xlParsedMW.length){
+    win.document.write('<div style="font-size:15px;font-weight:800;color:#1b2d4f;margin:0 0 12px;text-transform:uppercase;letter-spacing:1px">Midweek Meeting Schedule</div>');
+    _xlParsedMW.forEach(function(m){win.document.write(buildPrintMWCard(m));});
+  }
+  if(_xlParsedWK.length){
+    win.document.write('<div style="font-size:15px;font-weight:800;color:#1b2d4f;margin:24px 0 12px;text-transform:uppercase;letter-spacing:1px">Weekend Meeting Schedule</div>');
+    _xlParsedWK.forEach(function(w){win.document.write(buildPrintWKCard(w));});
+  }
+  win.document.write('</body></html>');
+  win.document.close();
+  win.focus();
+  setTimeout(function(){win.print();},600);
+}
+
+function pRow(lbl,val){
+  if(!val||val==='—'||val==='')return'';
+  return'<div class="p-row"><div class="p-lbl">'+lbl+'</div><div class="p-val">'+val+'</div></div>';
+}
+
+function buildPrintMWCard(m){
+  var p1='',p2='',p3='',p4='';
+  if(m.p1Type||m.p1Asst){p1=pRow(m.p1Type||'Part 1',m.p1Asst?'Asst: '+m.p1Asst:'');}
+  if(m.p2Type||m.p2Asst){p2=pRow(m.p2Type||'Part 2',m.p2Asst?'Asst: '+m.p2Asst:'');}
+  if(m.p3Type||m.p3Asst){p3=pRow(m.p3Type||'Part 3',m.p3Asst?'Asst: '+m.p3Asst:'');}
+  if(m.p4Type||m.p4Asst){p4=pRow(m.p4Type||'Part 4',m.p4Asst?'Asst: '+m.p4Asst:'');}
+  return'<div class="p-card">'+
+    '<div class="p-date">Week of '+fmtDate(m.date)+'</div>'+
+    '<div class="p-time">'+fmtTime(m.time)+'</div>'+
+    '<div class="p-sec"><div class="p-sec-hd gold">Opening</div>'+pRow('Opening Song',m.song1)+pRow('Chairman',m.chairman)+pRow('Opening Prayer',m.prayOpen)+'</div>'+
+    '<div class="p-sec"><div class="p-sec-hd">1 — Treasures from God's Word</div>'+pRow('Talk',m.talk+(m.talkWho?' — '+m.talkWho:''))+pRow('Spiritual Gems',m.gemsWho)+pRow('Bible Reading',m.bibleRead)+'</div>'+
+    '<div class="p-sec"><div class="p-sec-hd green">2 — Apply Yourself to the Field Ministry</div>'+p1+p2+p3+p4+'</div>'+
+    (m.song2?'<div class="p-sec">'+pRow('Middle Song',m.song2)+'</div>':'')+
+    '<div class="p-sec"><div class="p-sec-hd brown">3 — Living as Christians</div>'+
+    pRow(m.lac1Title||'Part 1',m.lac1Who)+pRow(m.lac2Title||'Part 2',m.lac2Who)+
+    pRow('CBS Conductor',m.cbsCond)+pRow('CBS Reader',m.cbsRead)+pRow('Closing Song',m.song3)+pRow('Closing Prayer',m.prayClose)+'</div>'+
+  '</div>';
+}
+
+function buildPrintWKCard(w){
+  return'<div class="p-card">'+
+    '<div class="p-date">'+fmtDate(w.date)+'</div>'+
+    '<div class="p-time">'+fmtTime(w.time)+'</div>'+
+    '<div class="p-sec"><div class="p-sec-hd gold">Opening</div>'+pRow('Opening Song',w.song1)+pRow('Chairman',w.chairman)+pRow('Opening Prayer',w.prayOpen)+'</div>'+
+    '<div class="p-sec"><div class="p-sec-hd">Public Talk</div>'+pRow('Title',w.talkTitle)+pRow('Speaker',w.speaker)+'</div>'+
+    '<div class="p-sec"><div class="p-sec-hd green">Watchtower Study</div>'+pRow('WT Opening Song',w.song2)+pRow('Article',w.wtTitle)+pRow('Conductor',w.wtCond)+pRow('Reader',w.wtRead)+pRow('WT Closing Song',w.song3)+pRow('Closing Prayer',w.prayClose)+'</div>'+
+  '</div>';
 }
 
 // ============================================================
