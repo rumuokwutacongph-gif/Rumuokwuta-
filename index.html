@@ -206,7 +206,8 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(245,240,232,0.5
       <div id="pub-meeting-banner" style="background:linear-gradient(135deg,var(--navy),#0f1d36);color:#fff;border-radius:14px;padding:18px 18px 14px;margin-bottom:14px">
         <div style="font-size:10px;font-weight:700;letter-spacing:2px;opacity:0.5;text-transform:uppercase;margin-bottom:4px">Next Meeting</div>
         <div id="pub-next-meeting-title" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;line-height:1.2;margin-bottom:2px">Loading&#8230;</div>
-        <div id="pub-next-meeting-date" style="font-size:13px;opacity:0.65;margin-bottom:12px"></div>
+        <div id="pub-next-meeting-date" style="font-size:13px;opacity:0.65;margin-bottom:10px"></div>
+        <div id="pub-talk-info" style="display:none;margin-bottom:12px;padding:10px 13px;background:rgba(255,255,255,0.07);border-left:3px solid var(--gold);border-radius:0 8px 8px 0"><div id="pub-talk-title" style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#fff;line-height:1.3"></div><div id="pub-talk-speaker" style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:3px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase"></div></div>
         <div id="pub-next-meeting-part" style="font-size:13px;background:rgba(200,169,74,0.15);border:1px solid rgba(200,169,74,0.3);border-radius:8px;padding:8px 12px;margin-bottom:12px;display:none"></div>
         <div id="pub-zoom-box" style="display:none">
           <div style="font-size:10px;font-weight:700;letter-spacing:1px;opacity:0.5;text-transform:uppercase;margin-bottom:6px">&#128247; Join on Zoom</div>
@@ -526,7 +527,7 @@ var midweeks   = lcGet('midweeks',[]);
 var weekends   = lcGet('weekends',[]);
 var fsms       = lcGet('fsms',[]);
 var notifs     = lcGet('notifs',[]);
-var zoomInfo   = lcGet('zoomInfo',{midweekId:'',midweekPass:'',midweekLink:'',weekendId:'',weekendPass:'',weekendLink:''});
+var zoomInfo   = lcGet('zoomInfo',{midweekId:'2087417140',midweekPass:'John316',midweekLink:'https://jworg.zoom.us/j/2087417140?pwd=SYjQTzea6ZzKNO4jRbtqMotMO61G5j.1',weekendId:'2087417140',weekendPass:'John316',weekendLink:'https://jworg.zoom.us/j/2087417140?pwd=SYjQTzea6ZzKNO4jRbtqMotMO61G5j.1'});
 
 if(!groups||groups.length===0){
   groups=[{id:'g1',name:'Group 1',overseer:'',assistant:''},{id:'g2',name:'Group 2',overseer:'',assistant:''},{id:'g3',name:'Group 3',overseer:'',assistant:''},{id:'g4',name:'Group 4',overseer:'',assistant:''},{id:'g5',name:'Group 5',overseer:'',assistant:''},{id:'g6',name:'Group 6',overseer:'',assistant:''}];
@@ -587,17 +588,16 @@ function pullFromCloud(onDone){
   setSyncStatus('syncing');
   fbRead(function(err,data){
     if(err||!data){setSyncStatus('offline');if(onDone)onDone(false);return;}
-    var ch=false;
     ['groups','publishers','reports','midweeks','weekends','fsms'].forEach(function(k){
-      if(data[k]&&Array.isArray(data[k])&&data[k].length>0){
-        window[k]=data[k];lcSet(k,data[k]);ch=true;
+      if(data[k]&&Array.isArray(data[k])){
+        window[k]=data[k];lcSet(k,data[k]);
       }
     });
     if(data.zoomInfo&&data.zoomInfo.midweekId!==undefined){
-      zoomInfo=data.zoomInfo;lcSet('zoomInfo',zoomInfo);ch=true;
+      zoomInfo=data.zoomInfo;lcSet('zoomInfo',zoomInfo);
     }
     setSyncStatus('ok');
-    if(onDone)onDone(ch);
+    if(onDone)onDone(true);
   });
 }
 
@@ -642,11 +642,22 @@ document.addEventListener('visibilitychange',function(){
 window.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')saveAll();});
 window.addEventListener('pagehide',function(){saveAll();});
 
-// Auto-pull on app load so publishers list is always fresh
+// Auto-pull on app load so publishers list is always fresh, then restore session
 (function(){
   if(SYNC_READY){
-    pullFromCloud(function(ch){
-      if(ch){console.log('[sync] Initial pull got fresh data');}
+    pullFromCloud(function(){
+      console.log('[sync] Initial pull complete');
+      // Restore session if previously logged in
+      try{
+        var sess=localStorage.getItem('cma_session');
+        if(sess){
+          var s=JSON.parse(sess);
+          var found=null;
+          for(var i=0;i<publishers.length;i++){if(publishers[i].id===s.id){found=publishers[i];break;}}
+          if(found){currentUser=found;if(found.isAdmin)launchAdmin();else launchPublisher();return;}
+          else{localStorage.removeItem('cma_session');}
+        }
+      }catch(e){localStorage.removeItem('cma_session');}
     });
   }
 })();
@@ -740,6 +751,7 @@ function doRegister(){
   saveAll();
   pushToCloud(); // immediate push so other devices see new publisher
   currentUser=newPub;
+  localStorage.setItem('cma_session',JSON.stringify({id:newPub.id,name:newPub.name}));
   launchPublisher();
 }
 function showLogin(role){
@@ -777,6 +789,7 @@ function doLogin(){
     if(!user){err.textContent='Name or PIN not found. Please try again.';err.style.display='block';return;}
     if(loginRole==='admin'&&!user.isAdmin){err.textContent='You do not have admin access.';err.style.display='block';return;}
     currentUser=user;
+    localStorage.setItem('cma_session',JSON.stringify({id:user.id,name:user.name}));
     if(user.isAdmin)launchAdmin();else launchPublisher();
   }
   // Pull from cloud so we always have the latest publishers
@@ -786,7 +799,7 @@ function doLogin(){
     attemptLogin();
   });
 }
-function doSignOut(){currentUser=null;showScreen('screen-landing');showHome();}
+function doSignOut(){currentUser=null;localStorage.removeItem('cma_session');showScreen('screen-landing');showHome();}
 
 // ============================================================
 // PUBLISHER
@@ -855,6 +868,16 @@ function renderPubHome(){
         {role:'CBS Reader',who:m.cbsRead},{role:'Closing Prayer',who:m.prayClose}
       ];
       parts.forEach(function(p){if(p.who&&p.who.toLowerCase().indexOf(pn.split(' ')[0])>-1){partText+=p.role+'<br>';}});
+    }
+    var talkInfoBox=document.getElementById('pub-talk-info');
+    var talkTitleEl=document.getElementById('pub-talk-title');
+    var talkSpeakerEl=document.getElementById('pub-talk-speaker');
+    if(nextMtg.type==='weekend'&&nextMtg.obj&&(nextMtg.obj.talkTitle||nextMtg.obj.speaker)){
+      if(talkInfoBox){talkInfoBox.style.display='block';}
+      if(talkTitleEl){talkTitleEl.textContent=nextMtg.obj.talkTitle||'Public Talk';}
+      if(talkSpeakerEl){talkSpeakerEl.textContent=nextMtg.obj.speaker?'Speaker: '+nextMtg.obj.speaker:'';}
+    } else {
+      if(talkInfoBox){talkInfoBox.style.display='none';}
     }
     if(nextMtg.type==='weekend'&&nextMtg.obj){
       var w=nextMtg.obj, pn=currentUser.name.toLowerCase();
@@ -1458,6 +1481,11 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
   var t=new Date().toISOString().split('T')[0];
   sv('mw-date',t);sv('wk-date',t);sv('fsm-date',t);
   sv('rpt-month',new Date().toISOString().slice(0,7));
+  // Ensure default Zoom info is always saved locally and synced
+  if(!zoomInfo.midweekLink){
+    zoomInfo={midweekId:'2087417140',midweekPass:'John316',midweekLink:'https://jworg.zoom.us/j/2087417140?pwd=SYjQTzea6ZzKNO4jRbtqMotMO61G5j.1',weekendId:'2087417140',weekendPass:'John316',weekendLink:'https://jworg.zoom.us/j/2087417140?pwd=SYjQTzea6ZzKNO4jRbtqMotMO61G5j.1'};
+    lcSet('zoomInfo',zoomInfo);
+  }
 })();
 </script>
 </body>
