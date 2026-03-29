@@ -9,7 +9,7 @@
 <title>Rumuokwuta Ministry Assistant</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- SheetJS loaded on demand for Excel import -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#1b2d4f;--navy2:#243860;--gold:#c8a94a;--gold2:#e8c96a;--cream:#f5f0e8;--soft:#e4ddd0;--green:#3d7a52;--red:#883333;--muted:#7a7060;--border:rgba(200,190,170,0.5);}
@@ -698,30 +698,9 @@ window.addEventListener('pagehide',function(){saveAll();});
 // ============================================================
 var currentUser=null,loginRole='publisher';
 
-// Auto-pull on app load so publishers list is always fresh, then restore session
-function tryRestoreSession(){
-  try{
-    var sess=localStorage.getItem('cma_session');
-    if(!sess)return false;
-    var s=JSON.parse(sess);
-    var found=null;
-    for(var i=0;i<publishers.length;i++){if(publishers[i].id===s.id){found=publishers[i];break;}}
-    if(found){currentUser=found;if(found.isAdmin)launchAdmin();else launchPublisher();return true;}
-    else{localStorage.removeItem('cma_session');return false;}
-  }catch(e){localStorage.removeItem('cma_session');return false;}
-}
-
+// Pull fresh data from cloud in background on page load
 window.addEventListener('DOMContentLoaded',function(){
-  if(SYNC_READY){
-    // Try local cache first — instant, no network needed
-    if(!tryRestoreSession()){
-      // No saved session — pull cloud data in background for fresh publisher list
-      pullFromCloud(function(){});
-    } else {
-      // Session restored — pull fresh data in background
-      pullFromCloud(function(){});
-    }
-  }
+  if(SYNC_READY){ pullFromCloud(function(){}); }
 });
 function gv(id){var e=document.getElementById(id);return e?e.value.trim():'';}
 function sv(id,v){var e=document.getElementById(id);if(e)e.value=v;}
@@ -808,7 +787,6 @@ function doRegister(){
   saveAll();
   pushToCloud(); // immediate push so other devices see new publisher
   currentUser=newPub;
-  localStorage.setItem('cma_session',JSON.stringify({id:newPub.id,name:newPub.name}));
   launchPublisher();
 }
 function showLogin(role){
@@ -846,7 +824,6 @@ function doLogin(){
     if(!user){err.textContent='Name or PIN not found. Please try again.';err.style.display='block';return;}
     if(loginRole==='admin'&&!user.isAdmin){err.textContent='You do not have admin access.';err.style.display='block';return;}
     currentUser=user;
-    localStorage.setItem('cma_session',JSON.stringify({id:user.id,name:user.name}));
     if(user.isAdmin)launchAdmin();else launchPublisher();
   }
   // Pull from cloud so we always have the latest publishers
@@ -856,7 +833,7 @@ function doLogin(){
     attemptLogin();
   });
 }
-function doSignOut(){currentUser=null;localStorage.removeItem('cma_session');showScreen('screen-landing');showHome();}
+function doSignOut(){currentUser=null;showScreen('screen-landing');showHome();}
 
 // ============================================================
 // PUBLISHER
@@ -1536,6 +1513,21 @@ function parseExcelFile(){
   var inp=document.getElementById('xl-file-input');
   var status=document.getElementById('xl-status');
   if(!inp.files||!inp.files[0]){status.textContent='⚠️ Please select a file first.';status.style.color='#e53935';return;}
+  status.textContent='Loading Excel library…';status.style.color='var(--navy)';
+  // Load SheetJS on demand
+  if(typeof XLSX==='undefined'){
+    var s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload=function(){doParseExcelFile();};
+    s.onerror=function(){status.textContent='❌ Could not load Excel library. Check internet.';status.style.color='#e53935';};
+    document.head.appendChild(s);
+    return;
+  }
+  doParseExcelFile();
+}
+function doParseExcelFile(){
+  var inp=document.getElementById('xl-file-input');
+  var status=document.getElementById('xl-status');
   status.textContent='Reading file…';status.style.color='var(--navy)';
   var reader=new FileReader();
   reader.onload=function(e){
