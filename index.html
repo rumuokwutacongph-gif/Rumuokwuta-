@@ -693,30 +693,37 @@ document.addEventListener('visibilitychange',function(){
 window.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')saveAll();});
 window.addEventListener('pagehide',function(){saveAll();});
 
-// Auto-pull on app load so publishers list is always fresh, then restore session
-(function(){
-  if(SYNC_READY){
-    pullFromCloud(function(){
-      console.log('[sync] Initial pull complete');
-      // Restore session if previously logged in
-      try{
-        var sess=localStorage.getItem('cma_session');
-        if(sess){
-          var s=JSON.parse(sess);
-          var found=null;
-          for(var i=0;i<publishers.length;i++){if(publishers[i].id===s.id){found=publishers[i];break;}}
-          if(found){currentUser=found;if(found.isAdmin)launchAdmin();else launchPublisher();return;}
-          else{localStorage.removeItem('cma_session');}
-        }
-      }catch(e){localStorage.removeItem('cma_session');}
-    });
-  }
-})();
-
 // ============================================================
 // HELPERS
 // ============================================================
 var currentUser=null,loginRole='publisher';
+
+// Auto-pull on app load so publishers list is always fresh, then restore session
+(function(){
+  function tryRestoreSession(){
+    try{
+      var sess=localStorage.getItem('cma_session');
+      if(!sess)return false;
+      var s=JSON.parse(sess);
+      var found=null;
+      for(var i=0;i<publishers.length;i++){if(publishers[i].id===s.id){found=publishers[i];break;}}
+      if(found){currentUser=found;if(found.isAdmin)launchAdmin();else launchPublisher();return true;}
+      else{localStorage.removeItem('cma_session');return false;}
+    }catch(e){localStorage.removeItem('cma_session');return false;}
+  }
+  if(SYNC_READY){
+    // Try restoring from local cache first (instant, no network wait)
+    if(!tryRestoreSession()){
+      // If no local session, pull from cloud then try again
+      pullFromCloud(function(){
+        tryRestoreSession();
+      });
+    } else {
+      // Already restored — still pull in background for fresh data
+      pullFromCloud(function(){});
+    }
+  }
+})();
 function gv(id){var e=document.getElementById(id);return e?e.value.trim():'';}
 function sv(id,v){var e=document.getElementById(id);if(e)e.value=v;}
 function uid(){return '_'+Math.random().toString(36).slice(2,9);}
