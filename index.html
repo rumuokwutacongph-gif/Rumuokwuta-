@@ -587,16 +587,17 @@ function pullFromCloud(onDone){
   setSyncStatus('syncing');
   fbRead(function(err,data){
     if(err||!data){setSyncStatus('offline');if(onDone)onDone(false);return;}
+    var ch=false;
     ['groups','publishers','reports','midweeks','weekends','fsms'].forEach(function(k){
-      if(data[k]&&Array.isArray(data[k])){
-        window[k]=data[k];lcSet(k,data[k]);
+      if(data[k]&&Array.isArray(data[k])&&data[k].length>0){
+        window[k]=data[k];lcSet(k,data[k]);ch=true;
       }
     });
     if(data.zoomInfo&&data.zoomInfo.midweekId!==undefined){
-      zoomInfo=data.zoomInfo;lcSet('zoomInfo',zoomInfo);
+      zoomInfo=data.zoomInfo;lcSet('zoomInfo',zoomInfo);ch=true;
     }
     setSyncStatus('ok');
-    if(onDone)onDone(true);
+    if(onDone)onDone(ch);
   });
 }
 
@@ -641,22 +642,11 @@ document.addEventListener('visibilitychange',function(){
 window.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')saveAll();});
 window.addEventListener('pagehide',function(){saveAll();});
 
-// Auto-pull on app load so publishers list is always fresh, then restore session
+// Auto-pull on app load so publishers list is always fresh
 (function(){
   if(SYNC_READY){
-    pullFromCloud(function(){
-      console.log('[sync] Initial pull complete');
-      // Restore session if previously logged in
-      try{
-        var sess=localStorage.getItem('cma_session');
-        if(sess){
-          var s=JSON.parse(sess);
-          var found=null;
-          for(var i=0;i<publishers.length;i++){if(publishers[i].id===s.id){found=publishers[i];break;}}
-          if(found){currentUser=found;if(found.isAdmin)launchAdmin();else launchPublisher();return;}
-          else{localStorage.removeItem('cma_session');}
-        }
-      }catch(e){localStorage.removeItem('cma_session');}
+    pullFromCloud(function(ch){
+      if(ch){console.log('[sync] Initial pull got fresh data');}
     });
   }
 })();
@@ -750,7 +740,6 @@ function doRegister(){
   saveAll();
   pushToCloud(); // immediate push so other devices see new publisher
   currentUser=newPub;
-  localStorage.setItem('cma_session',JSON.stringify({id:newPub.id,name:newPub.name}));
   launchPublisher();
 }
 function showLogin(role){
@@ -788,7 +777,6 @@ function doLogin(){
     if(!user){err.textContent='Name or PIN not found. Please try again.';err.style.display='block';return;}
     if(loginRole==='admin'&&!user.isAdmin){err.textContent='You do not have admin access.';err.style.display='block';return;}
     currentUser=user;
-    localStorage.setItem('cma_session',JSON.stringify({id:user.id,name:user.name}));
     if(user.isAdmin)launchAdmin();else launchPublisher();
   }
   // Pull from cloud so we always have the latest publishers
@@ -798,7 +786,7 @@ function doLogin(){
     attemptLogin();
   });
 }
-function doSignOut(){currentUser=null;localStorage.removeItem('cma_session');showScreen('screen-landing');showHome();}
+function doSignOut(){currentUser=null;showScreen('screen-landing');showHome();}
 
 // ============================================================
 // PUBLISHER
