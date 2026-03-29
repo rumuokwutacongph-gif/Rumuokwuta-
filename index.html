@@ -699,31 +699,30 @@ window.addEventListener('pagehide',function(){saveAll();});
 var currentUser=null,loginRole='publisher';
 
 // Auto-pull on app load so publishers list is always fresh, then restore session
-(function(){
-  function tryRestoreSession(){
-    try{
-      var sess=localStorage.getItem('cma_session');
-      if(!sess)return false;
-      var s=JSON.parse(sess);
-      var found=null;
-      for(var i=0;i<publishers.length;i++){if(publishers[i].id===s.id){found=publishers[i];break;}}
-      if(found){currentUser=found;if(found.isAdmin)launchAdmin();else launchPublisher();return true;}
-      else{localStorage.removeItem('cma_session');return false;}
-    }catch(e){localStorage.removeItem('cma_session');return false;}
-  }
+function tryRestoreSession(){
+  try{
+    var sess=localStorage.getItem('cma_session');
+    if(!sess)return false;
+    var s=JSON.parse(sess);
+    var found=null;
+    for(var i=0;i<publishers.length;i++){if(publishers[i].id===s.id){found=publishers[i];break;}}
+    if(found){currentUser=found;if(found.isAdmin)launchAdmin();else launchPublisher();return true;}
+    else{localStorage.removeItem('cma_session');return false;}
+  }catch(e){localStorage.removeItem('cma_session');return false;}
+}
+
+window.addEventListener('DOMContentLoaded',function(){
   if(SYNC_READY){
-    // Try restoring from local cache first (instant, no network wait)
+    // Try local cache first — instant, no network needed
     if(!tryRestoreSession()){
-      // If no local session, pull from cloud then try again
-      pullFromCloud(function(){
-        tryRestoreSession();
-      });
+      // No saved session — pull cloud data in background for fresh publisher list
+      pullFromCloud(function(){});
     } else {
-      // Already restored — still pull in background for fresh data
+      // Session restored — pull fresh data in background
       pullFromCloud(function(){});
     }
   }
-})();
+});
 function gv(id){var e=document.getElementById(id);return e?e.value.trim():'';}
 function sv(id,v){var e=document.getElementById(id);if(e)e.value=v;}
 function uid(){return '_'+Math.random().toString(36).slice(2,9);}
@@ -1808,16 +1807,17 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){navig
 // ============================================================
 // INIT - set date fields only, never overwrite saved data
 // ============================================================
-(function(){
+// Ensure default Zoom info is always saved locally
+if(!zoomInfo.midweekLink){
+  zoomInfo={midweekId:'2087417140',midweekPass:'John316',midweekLink:'https://jworg.zoom.us/j/2087417140?pwd=SYjQTzea6ZzKNO4jRbtqMotMO61G5j.1',weekendId:'2087417140',weekendPass:'John316',weekendLink:'https://jworg.zoom.us/j/2087417140?pwd=SYjQTzea6ZzKNO4jRbtqMotMO61G5j.1'};
+  lcSet('zoomInfo',zoomInfo);
+}
+// Set form date defaults after DOM ready
+window.addEventListener('DOMContentLoaded',function(){
   var t=new Date().toISOString().split('T')[0];
   sv('mw-date',t);sv('wk-date',t);sv('fsm-date',t);
   sv('rpt-month',new Date().toISOString().slice(0,7));
-  // Ensure default Zoom info is always saved locally and synced
-  if(!zoomInfo.midweekLink){
-    zoomInfo={midweekId:'2087417140',midweekPass:'John316',midweekLink:'https://jworg.zoom.us/j/2087417140?pwd=SYjQTzea6ZzKNO4jRbtqMotMO61G5j.1',weekendId:'2087417140',weekendPass:'John316',weekendLink:'https://jworg.zoom.us/j/2087417140?pwd=SYjQTzea6ZzKNO4jRbtqMotMO61G5j.1'};
-    lcSet('zoomInfo',zoomInfo);
-  }
-})();
+});
 </script>
 </body>
 </html>
